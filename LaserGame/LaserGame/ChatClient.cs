@@ -24,7 +24,7 @@ namespace ChatClient {
         [DllImport( "kernel32.dll" )]
         private static extern void ExitProcess( int a );
 
-        public static void Main() {
+       /* public static void Main() {
             client = new Form();
             client.Text = "Chat Client";
 
@@ -45,7 +45,7 @@ namespace ChatClient {
             while(true) {
                 Application.DoEvents();
             }
-        }
+        }*/
 
         private static void ChatClient_Closing( object s, CancelEventArgs e ) {
             e.Cancel = false;
