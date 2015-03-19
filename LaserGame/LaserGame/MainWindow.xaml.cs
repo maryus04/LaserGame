@@ -16,6 +16,7 @@ namespace Client {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+            MapParser.SetMapName( "initial.map1" );
             MapParser.ParseMapDimensions(WIDTH,HEIGHT);
         }
 
