@@ -12,11 +12,13 @@ using System.Windows.Shapes;
 namespace Client.LaserComponents {
     class Laser {
 
-        ObservableCollection<Line> _laserLines;
-        Canvas _canvas;
+        private static ObservableCollection<Line> _laserLines;
+        private static Canvas _gameCanvas;
+        private static Canvas _debugCanvas;
 
-        public Laser( Canvas canvas ) {
-            _canvas = canvas;
+        public Laser( Canvas gameCanvas ,Canvas debugCanvas) {
+            _gameCanvas = gameCanvas;
+            _debugCanvas = debugCanvas;
             _laserLines = new ObservableCollection<Line>();
             _laserLines.CollectionChanged += ListChanged;
         }
@@ -33,11 +35,15 @@ namespace Client.LaserComponents {
             myLine.StrokeThickness = 1;
 
             _laserLines.Add( myLine );
-            _canvas.Children.Add( myLine );
+            _gameCanvas.Children.Add( myLine );
         }
 
         private void ListChanged( object sender, EventArgs e ) {
-            var child = _canvas.Children;
+            ExctractIntersectionPoints();
+        }
+
+        public static void ExctractIntersectionPoints() {
+            var child = _gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
             foreach(Rectangle rect in rectlist) {
                 double rectX = Canvas.GetLeft( rect );
@@ -54,22 +60,24 @@ namespace Client.LaserComponents {
             }
 
             if(GlobalVariable.debugMode) {
-                foreach(Point intersection in Debug.pointsToBeDrawn) {
-                    Debug.DrawPoint( _canvas, intersection );
+                LaserDebug.DeletePointsFromCanvas( _debugCanvas );
+                foreach(Point intersection in LaserDebug.pointsToBeDrawn) {
+                    LaserDebug.DrawPoint( _debugCanvas, intersection );
                 }
+                LaserDebug.DeletePointList( _debugCanvas );
             }
         }
 
-        Point LineIntersectionPoint( Point lp1, Point lp2, Point rp1, Point rp2 ) {
-            var A1 = lp2.Y - lp1.Y;
-            var B1 = lp1.X - lp2.X;
-            var C1 = A1 * lp1.X + B1 * lp1.Y;
+        private static Point LineIntersectionPoint( Point lp1, Point lp2, Point rp1, Point rp2 ) {
+            double A1 = lp2.Y - lp1.Y;
+            double B1 = lp1.X - lp2.X;
+            double C1 = A1 * lp1.X + B1 * lp1.Y;
 
-            var A2 = rp2.Y - rp1.Y;
-            var B2 = rp1.X - rp2.X;
-            var C2 = A2 * rp1.X + B2 * rp1.Y;
+            double A2 = rp2.Y - rp1.Y;
+            double B2 = rp1.X - rp2.X;
+            double C2 = A2 * rp1.X + B2 * rp1.Y;
 
-            var delta = A1 * B2 - A2 * B1;
+            double delta = A1 * B2 - A2 * B1;
             if(delta == 0)
                 return new Point( -1, -1 );
 
@@ -79,13 +87,13 @@ namespace Client.LaserComponents {
                 return new Point( -1, -1 );
 
             if(GlobalVariable.debugMode) {
-                Debug.pointsToBeDrawn.Add( intersection );
+                LaserDebug.pointsToBeDrawn.Add( intersection );
             }
 
             return intersection;
         }
 
-        bool IsOnLine( Point pt1, Point pt2, Point pt ) {
+        private static bool IsOnLine( Point pt1, Point pt2, Point pt ) {
             return ((pt.X >= pt1.X && pt.X <= pt2.X) && (pt.Y >= pt1.Y && pt.Y <= pt2.Y)) ||
                 ((pt.X <= pt1.X && pt.X >= pt2.X) && (pt.Y <= pt1.Y && pt.Y >= pt2.Y));
         }

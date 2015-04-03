@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatServer.cs" />
+    <Compile Include="GlobalVariable.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -11,15 +11,47 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Forms;
+using Client.Map.Sprite;
+using System.Drawing;
+using System.Net.Sockets;
+using System.IO;
 
 namespace Client {
     public partial class MainWindow : Window {
+
+        static TcpClient _tcpClient;
+        int _width;
+        int _height;
+
         public MainWindow() {
             InitializeComponent();
-            MapParser.SetMapName( "initial.map1" );
-            MapParser.ParseMapDimensions(WIDTH,HEIGHT);
         }
 
+        private void SendNickName() {
+            StreamWriter writer = new StreamWriter( _tcpClient.GetStream() );
+            writer.WriteLine("MyName:" + PlayerNameTB.Text );
+            writer.Flush();
+        }
+
+        private void NewGame( object sender, RoutedEventArgs e ) {
+            MapParser.SetMapName( "initial.map1" );
+            _width = MapParser.ParseMapDimensions().Item1;
+            _height = MapParser.ParseMapDimensions().Item2;
+
+            _tcpClient = new TcpClient();
+            _tcpClient.Connect( IpAddTB.Text, 4296 );
+
+            SendNickName();
+
+            //new GameWindow( _width, _height, PlayerNameTB.Text, IpAddTB.Text );
+
+            //this.Close();
+        }
+
+        private void ExitGame( object sender, RoutedEventArgs e ) {
+            this.Close();
+        }
 
     }
 }

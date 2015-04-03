@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaserGame", "LaserGame\LaserGame.csproj", "{734E9FC3-B906-4783-B21D-2166F8854DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "LaserGame\Client.csproj", "{734E9FC3-B906-4783-B21D-2166F8854DB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{F9D63354-B4C6-4EA9-A3D6-5D77531CCE20}"
 EndProject
