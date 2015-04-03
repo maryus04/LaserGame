@@ -12,19 +12,21 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Server;
+using System.Net.Sockets;
 
 namespace ChatClient {
     public partial class ChatClient {
+
         public ChatClient() {
-            //InitializeComponent();
+            StartChat();
         }
         static Form client;
-        static Chat.Sockets.TcpClient tcpClient;
+        static TcpClient tcpClient;
 
         [DllImport( "kernel32.dll" )]
         private static extern void ExitProcess( int a );
 
-       /* public static void Main() {
+        public static void StartChat() {
             client = new Form();
             client.Text = "Chat Client";
 
@@ -38,14 +40,16 @@ namespace ChatClient {
             client.WindowState = FormWindowState.Maximized;
             client.Show();
             ((TextBox)client.Controls[1]).KeyUp += new KeyEventHandler( key_up );
-            tcpClient = new Chat.Sockets.TcpClient();
+
+            tcpClient = new TcpClient();
             tcpClient.Connect( "127.0.0.1", 4296 );
+
             Thread chatThread = new Thread( new ThreadStart( run ) );
             chatThread.Start();
             while(true) {
                 Application.DoEvents();
             }
-        }*/
+        }
 
         private static void ChatClient_Closing( object s, CancelEventArgs e ) {
             e.Cancel = false;
