@@ -21,58 +21,56 @@ using System.Threading;
 namespace Client {
     public partial class MainWindow : Window {
 
-        static TcpClient _tcpClient;
-        StreamWriter _writer;
-        StreamReader _reader;
-        int _width;
-        int _height;
-
         public MainWindow() {
             InitializeComponent();
         }
 
-        private void SendNickName() {
-            _writer.WriteLine("MyName:" + PlayerNameTB.Text );
-            _writer.Flush();
-        }
-
         private void NewGame( object sender, RoutedEventArgs e ) {
             MapParser.SetMapName( "initial.map1" );
-            _width = MapParser.ParseMapDimensions().Item1;
-            _height = MapParser.ParseMapDimensions().Item2;
+            Player.Width = MapParser.ParseMapDimensions().Item1;
+            Player.Height = MapParser.ParseMapDimensions().Item2;
 
-            _tcpClient = new TcpClient();
-            _tcpClient.Connect( IpAddTB.Text, 4296 );
+            Player.TcpClient = new TcpClient();
+            Player.TcpClient.Connect( IpAddTB.Text, 4296 );
 
-            _writer = new StreamWriter( _tcpClient.GetStream() );
-            _reader = new StreamReader( _tcpClient.GetStream() );
+            Player.Writer = new StreamWriter( Player.TcpClient.GetStream() );
+            Player.Reader = new StreamReader( Player.TcpClient.GetStream() );
+            Player.Connected = true;
+
+            Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
+            ReadIncomming.Start();
 
             SendNickName();
-
-            //Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
-            //ReadIncomming.Start();
 
             //new GameWindow( _width, _height, PlayerNameTB.Text, IpAddTB.Text );
 
             //this.Close();
         }
 
+        private void SendNickName() {
+            Player.WriteLine( "MyName:" + PlayerNameTB.Text );
+        }
+
         private void ReadMessages() {
-            while(true) {
-                string message = _reader.ReadLine();
+            while(Player.Connected) {
+                string message = Player.ReadLine();
 
                 if(GlobalVariable.debugMode) {
                     Console.WriteLine( message );
                 }
 
-                string method = message.Substring( 0, message.IndexOf( ":" ) );
-                message.Replace( method, "" );
+                string method = message.Substring( 0, message.IndexOf( ":" )+1 );
+                message = message.Replace( method, "" );
 
                 switch(method) {
                     case "ConnectionAccepted:":
+                        Player.Name = message;
+                        this.Dispatcher.Invoke( (Action)(() => { IpAddTB.Text = message; }) );
+                        break;
+                    case "NickNameInUse:":
+                        this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Error: Nickname already in use"; }) );
                         break;
                 }
-
             }
         }
 
@@ -81,9 +79,15 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            _writer.WriteLine( "CloseConnection:" );
-            _writer.Flush();
-            System.Threading.Thread.Sleep( 2000 );
+            Player.Connected = false;
+            Player.WriteLine( "CloseConnection:" );
+            Player.Reader.Close();
+            Player.Writer.Close();
+            Player.TcpClient.Close();
+        }
+
+        private void Window_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {
+            ErrorLabel.Content = "";
         }
 
     }
