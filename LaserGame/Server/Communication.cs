@@ -10,92 +10,68 @@ using System.Security.Permissions;
 
 namespace Server {
     class Communication {
-        TcpClient _client;
-        StreamReader _reader;
-        StreamWriter _writer;
-        string _nickName = "___";
-
-        Thread ReadIncomming;
+        ServerClient client = new ServerClient();
 
         public Communication( TcpClient tcpClient ) {
-            _client = tcpClient;
-            Thread chatThread = new Thread( new ThreadStart( BeginConnection ) );
-            chatThread.Start();
+            client.TcpClient = tcpClient;
+
+            BeginConnection();
         }
 
         private void BeginConnection() {
-            _reader = new StreamReader( _client.GetStream() );
-            _writer = new StreamWriter( _client.GetStream() );
-
-            ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
-            ReadIncomming.Start();
+            client.Reader = new StreamReader( client.GetStream() );
+            client.Writer = new StreamWriter( client.GetStream() );
+            client.IsConnected = true;
+            ReadMessages();
         }
 
         private void ReadMessages() {
             try {
-                while(_client.Connected) {
-                    string message = _reader.ReadLine();
+                while(client.IsConnected) {
+                    string message = client.ReadLine();
 
                     if(GlobalVariable.debugMode) {
                         Console.WriteLine( message );
                     }
 
-                    string method = message.Substring( 0, message.IndexOf( ":" ) );
-                    message.Replace( method, "" );
+                    string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
+                    message = message.Replace( method, "" );
 
                     switch(method) {
                         case "MyName:":
-                            if(ValidateNickName( message )) {
-                                AcceptConnection();
-                            }
+                            Thread acceptConnection = new Thread( () => ValidateNickName( message ) );
+                            acceptConnection.Name = "AcceptConnetion";
+                            acceptConnection.Start();
                             break;
                         case "CloseConnection:":
-                            CloseConnection();
+                            Thread closeConnection = new Thread( () => CloseConnection() );
+                            closeConnection.Name = "CloseConnetion";
+                            closeConnection.Start();
                             break;
                     }
                 }
             } catch(Exception) { }
         }
 
-        private string GetNick() {
-            return _reader.ReadLine();
-        }
-
-        private bool ValidateNickName( string name ) {
-            if(GlobalVariable.debugMode) {
-                Console.WriteLine( name );
-            }
+        private void ValidateNickName( string name ) {
             if(!Server._nickName.Contains( name )) {
-                _nickName = name;
-                return true;
+                client.NickName = name;
+                AcceptConnection();
+            } else {
+                client.WriteLine( "NickNameInUse:" );
             }
-            return false;
-        }
-
-        private void CloseConnection() {
-            _reader.Close();
-            _client.Close();
         }
 
         private void AcceptConnection() {
-            Server._nickName.Add( _nickName, _client );
-            Server._nickNameByConnect.Add( _client, _nickName );
-            Server.SendSysMsg( "*** " + _nickName + " *** joined the room" );
-            _writer.Flush();
-            Thread chatThread = new Thread( new ThreadStart( RunChat ) );
-            chatThread.Start();
+            Server._nickName.Add( client.NickName, client.TcpClient );
+            Server._nickNameByConnect.Add( client.TcpClient, client.NickName );
+            client.WriteLine( "ConnectionAccepted:" + client.NickName );
         }
 
-        private void RunChat() {
-            try {
-                string message = "";
-                while(true) {
-                    message = _reader.ReadLine();
-                    Server.SendMsgToAll( _nickName, message );
-                }
-            } catch(Exception e) {
-                Console.WriteLine( e );
-            }
+        private void CloseConnection() {
+            Server._nickName.Remove( client.NickName );
+            Server._nickNameByConnect.Remove( client.TcpClient );
+            client.Dispose();
         }
     }
 }

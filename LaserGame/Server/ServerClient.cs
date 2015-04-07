@@ -7,18 +7,25 @@ using System.IO;
 
 namespace Server {
     public class ServerClient {
-        public TcpClient TcpClient {set; get;}
+        public TcpClient TcpClient { set; get; }
 
         public StreamReader Reader { set; get; }
         public StreamWriter Writer { set; get; }
 
-        public string NickName {set; get;}
+        public string NickName { set; get; }
+
+        public bool IsConnected { set; get; }
 
         public NetworkStream GetStream() {
             return TcpClient.GetStream();
         }
 
-        public bool Connected() {
+        public void WriteLine( string message ) {
+            Writer.WriteLine( message );
+            Writer.Flush();
+        }
+
+        public bool IsTcpConnected() {
             return TcpClient.Connected;
         }
 
@@ -28,6 +35,13 @@ namespace Server {
 
         public void Flush() {
             Writer.Flush();
+        }
+
+        public void Dispose() {
+            IsConnected = false;
+            Reader.Close();
+            Writer.Close();
+            TcpClient.Close();
         }
     }
 }
