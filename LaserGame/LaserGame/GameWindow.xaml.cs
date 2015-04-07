@@ -14,8 +14,7 @@ using Client.LaserComponents;
 
 namespace Client {
     public partial class GameWindow : Window {
-        List<Player> playerList = new List<Player>();
-
+        
         public GameWindow() {
             InitializeComponent();
         }
@@ -26,8 +25,6 @@ namespace Client {
             GlobalVariable.debugMode = false;
 
             Laser laser = new Laser( gameCanvas, debugCanvas );
-
-            playerList.Add( new Player() );
 
             laser.buildFirstLine();
 
