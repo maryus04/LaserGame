@@ -22,8 +22,8 @@ namespace Client {
     public partial class MainWindow : Window {
 
         public MainWindow() {
-            InitializeComponent();
             ConsoleManager.DebugMode = true; //debug mdoe
+            InitializeComponent();
         }
 
         private void NewGame( object sender, RoutedEventArgs e ) {
