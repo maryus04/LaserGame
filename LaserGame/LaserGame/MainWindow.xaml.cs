@@ -39,6 +39,7 @@ namespace Client {
             Player.connected = true;
 
             Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
+            ReadIncomming.Name = "ReadMessages";
             ReadIncomming.Start();
 
             SendNickName();
