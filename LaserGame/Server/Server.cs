@@ -13,8 +13,8 @@ namespace Server {
         public static Hashtable _nickNameByConnect;
 
         public static void Main() {
-            new Server();
             ConsoleManager.debugMode = true; //debug mode
+            new Server();
         }
 
         public Server() {
