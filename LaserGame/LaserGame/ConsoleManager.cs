@@ -32,8 +32,22 @@ namespace Client {
             AllocConsole();
         }
 
-        public static void WriteLine( string message ) {
+        public static void Game( string message ) {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine( message );
+            Console.ResetColor();
+        }
+
+        public static void DebugGame( string message ) {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine( message );
+            Console.ResetColor();
+        }
+
+        public static void DebugErrorGame( string message ) {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine( message );
+            Console.ResetColor();
         }
 
     }

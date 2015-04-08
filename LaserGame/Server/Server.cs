@@ -14,6 +14,7 @@ namespace Server {
 
         public static void Main() {
             new Server();
+            ConsoleManager.debugMode = true; //debug mode
         }
 
         public Server() {
@@ -22,7 +23,6 @@ namespace Server {
             _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
             _chatServer.Start();
             ConsoleManager.ServerInfo( "Server started" );
-            ConsoleManager.debugMode = true; //debug mode
 
             while(true) {
                 if(_chatServer.Pending()) {

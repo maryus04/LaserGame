@@ -49,8 +49,8 @@ namespace Server {
             return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port;
         }
 
-        public long GetIp() {
-            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.Address;
+        public string GetIp() {
+            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
         }
     }
 }

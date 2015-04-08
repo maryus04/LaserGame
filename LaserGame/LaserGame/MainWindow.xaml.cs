@@ -58,18 +58,21 @@ namespace Client {
                 if(message.Length == 0) {
                     continue;
                 }
-                ConsoleManager.WriteLine( "Server sent:" + message );
 
-                string method = message.Substring( 0, message.IndexOf( ":" )+1 );
+                ConsoleManager.DebugGame( "Server sent:" + message );
+
+                string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
                 message = message.Replace( method, "" );
 
                 switch(method) {
                     case "ConnectionAccepted:":
                         Player.name = message;
                         this.Dispatcher.Invoke( (Action)(() => { IpAddTB.Text = message; }) );
+                        ConsoleManager.Game( "Connected as " + IpAddTB );
                         break;
                     case "NickNameInUse:":
                         this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Error: Nickname already in use"; }) );
+                        ConsoleManager.DebugErrorGame( "Error: Nickname already in use");
                         break;
                 }
             }

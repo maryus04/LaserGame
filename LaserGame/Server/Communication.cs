@@ -65,7 +65,7 @@ namespace Server {
             Server._nickName.Add( client.nickName, client.tcpClient );
             Server._nickNameByConnect.Add( client.tcpClient, client.nickName );
             client.WriteLine( "ConnectionAccepted:" + client.nickName );
-            ConsoleManager.Comunication( client.nickName + " is now connected to server. Port:" + client.GetPort() );
+            ConsoleManager.Comunication( client.nickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
         }
 
         private void CloseConnection() {
