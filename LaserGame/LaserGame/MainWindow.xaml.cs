@@ -67,8 +67,7 @@ namespace Client {
                 switch(method) {
                     case "ConnectionAccepted:":
                         Player.name = message;
-                        this.Dispatcher.Invoke( (Action)(() => { IpAddTB.Text = message; }) );
-                        ConsoleManager.Game( "Connected as " + IpAddTB );
+                        ConsoleManager.Game( "Connected as " + Player.name );
                         break;
                     case "NickNameInUse:":
                         this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Error: Nickname already in use"; }) );
