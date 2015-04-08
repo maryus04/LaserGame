@@ -4,44 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.IO;
+using System.Net;
 
 namespace Server {
     public class ServerClient {
-        public TcpClient TcpClient { set; get; }
+        public TcpClient tcpClient;
 
-        public StreamReader Reader { set; get; }
-        public StreamWriter Writer { set; get; }
+        public StreamReader reader;
+        public StreamWriter writer;
 
-        public string NickName { set; get; }
+        public string nickName = "NotYetSet";
 
-        public bool IsConnected { set; get; }
+        public bool isConnected;
 
         public NetworkStream GetStream() {
-            return TcpClient.GetStream();
+            return tcpClient.GetStream();
         }
 
         public void WriteLine( string message ) {
-            Writer.WriteLine( message );
-            Writer.Flush();
+            writer.WriteLine( message );
+            writer.Flush();
         }
 
         public bool IsTcpConnected() {
-            return TcpClient.Connected;
+            return tcpClient.Connected;
         }
 
         public String ReadLine() {
-            return Reader.ReadLine();
+            return reader.ReadLine();
         }
 
         public void Flush() {
-            Writer.Flush();
+            writer.Flush();
         }
 
         public void Dispose() {
-            IsConnected = false;
-            Reader.Close();
-            Writer.Close();
-            TcpClient.Close();
+            isConnected = false;
+            reader.Close();
+            writer.Close();
+            tcpClient.Close();
+        }
+
+        public int GetPort(){
+            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port;
+        }
+
+        public long GetIp() {
+            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.Address;
         }
     }
 }

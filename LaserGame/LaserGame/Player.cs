@@ -11,29 +11,34 @@ using System.IO;
 namespace Client {
     public static class Player {
 
-        public static string Name { set; get; }
+        public static string name;
         public static bool firstClick;
-        public static Rectangle FirstPortal { get; set; }
-        public static Rectangle SecondPortal { get; set; }
+        public static Rectangle firstPortal;
+        public static Rectangle secondPortal;
 
-        public static TcpClient TcpClient { set; get; }
-        public static bool Connected { set; get; }
+        public static TcpClient tcpClient;
+        public static bool connected;
 
-        public static StreamWriter Writer { set; get; }
-        public static StreamReader Reader { set; get; }
+        public static StreamWriter writer;
+        public static StreamReader reader;
 
-        public static int Width { set; get; }
-        public static int Height { set; get; }
-
-        
+        public static int width;
+        public static int height;
 
         public static void WriteLine( string message ) {
-            Writer.WriteLine( message );
-            Writer.Flush();
+            writer.WriteLine( message );
+            writer.Flush();
         }
 
         public static string ReadLine() {
-            return Reader.ReadLine();
+            try {
+                return reader.ReadLine();
+            } catch(Exception) {
+                Player.reader.Close();
+                Player.writer.Close();
+                Player.tcpClient.Close();
+            }
+            return "";
         }
 
     }

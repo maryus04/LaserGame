@@ -59,13 +59,13 @@ namespace Client.LaserComponents {
                 LineIntersectionPoint( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) );
             }
 
-            if(GlobalVariable.debugMode) {
-                LaserDebug.DeletePointsFromCanvas( _debugCanvas );
-                foreach(Point intersection in LaserDebug.pointsToBeDrawn) {
-                    LaserDebug.DrawPoint( _debugCanvas, intersection );
-                }
-                LaserDebug.DeletePointList( _debugCanvas );
-            }
+            //if(ConsoleManager.debugMode) {
+            //    LaserDebug.DeletePointsFromCanvas( _debugCanvas );
+            //    foreach(Point intersection in LaserDebug.pointsToBeDrawn) {
+            //       LaserDebug.DrawPoint( _debugCanvas, intersection );
+            //    }
+            //    LaserDebug.DeletePointList( _debugCanvas );
+            //}
         }
 
         private static Point LineIntersectionPoint( Point lp1, Point lp2, Point rp1, Point rp2 ) {
@@ -86,9 +86,9 @@ namespace Client.LaserComponents {
             if(!(IsOnLine( lp1, lp2, intersection ) && IsOnLine( rp1, rp2, intersection )))
                 return new Point( -1, -1 );
 
-            if(GlobalVariable.debugMode) {
-                LaserDebug.pointsToBeDrawn.Add( intersection );
-            }
+            //if(ConsoleManager.debugMode) {
+            //    LaserDebug.pointsToBeDrawn.Add( intersection );
+            //}
 
             return intersection;
         }

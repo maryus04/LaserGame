@@ -22,8 +22,6 @@ namespace Client {
         public GameWindow( int width, int height, string name, string ipAdd ) {
             InitializeComponent();
 
-            GlobalVariable.debugMode = false;
-
             Laser laser = new Laser( gameCanvas, debugCanvas );
 
             laser.buildFirstLine();
@@ -35,16 +33,16 @@ namespace Client {
             Rectangle rect = CreatePortal(e.GetPosition(gameCanvas));
 
             if(Player.firstClick) {
-                gameCanvas.Children.Remove( Player.FirstPortal );
+                gameCanvas.Children.Remove( Player.firstPortal );
 
-                Player.FirstPortal = rect;
+                Player.firstPortal = rect;
                 Player.firstClick = false;
 
                 gameCanvas.Children.Add( rect );
             } else {
-                gameCanvas.Children.Remove( Player.SecondPortal );
+                gameCanvas.Children.Remove( Player.secondPortal );
                 
-                Player.SecondPortal = rect;
+                Player.secondPortal = rect;
                 Player.firstClick = true;
 
                 gameCanvas.Children.Add( rect );

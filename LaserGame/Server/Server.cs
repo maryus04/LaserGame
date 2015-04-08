@@ -20,14 +20,14 @@ namespace Server {
             _nickName = new Hashtable( 100 );
             _nickNameByConnect = new Hashtable( 100 );
             _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
-
-            GlobalVariable.debugMode = true; //debug mode
+            _chatServer.Start();
+            ConsoleManager.ServerInfo( "Server started" );
+            ConsoleManager.debugMode = true; //debug mode
 
             while(true) {
-                _chatServer.Start();
                 if(_chatServer.Pending()) {
                     TcpClient connection = _chatServer.AcceptTcpClient();
-                    Console.WriteLine( "A new client has connected." );
+                    ConsoleManager.ServerInfo( "New client is pending..." );
 
                     Thread startCommunication = new Thread(() => newCommunication(connection));
                     startCommunication.Name = "StartConnetion";

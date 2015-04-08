@@ -23,19 +23,20 @@ namespace Client {
 
         public MainWindow() {
             InitializeComponent();
+            ConsoleManager.DebugMode = true; //debug mdoe
         }
 
         private void NewGame( object sender, RoutedEventArgs e ) {
             MapParser.SetMapName( "initial.map1" );
-            Player.Width = MapParser.ParseMapDimensions().Item1;
-            Player.Height = MapParser.ParseMapDimensions().Item2;
+            Player.width = MapParser.ParseMapDimensions().Item1;
+            Player.height = MapParser.ParseMapDimensions().Item2;
 
-            Player.TcpClient = new TcpClient();
-            Player.TcpClient.Connect( IpAddTB.Text, 4296 );
+            Player.tcpClient = new TcpClient();
+            Player.tcpClient.Connect( IpAddTB.Text, 4296 );
 
-            Player.Writer = new StreamWriter( Player.TcpClient.GetStream() );
-            Player.Reader = new StreamReader( Player.TcpClient.GetStream() );
-            Player.Connected = true;
+            Player.writer = new StreamWriter( Player.tcpClient.GetStream() );
+            Player.reader = new StreamReader( Player.tcpClient.GetStream() );
+            Player.connected = true;
 
             Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
             ReadIncomming.Start();
@@ -52,19 +53,19 @@ namespace Client {
         }
 
         private void ReadMessages() {
-            while(Player.Connected) {
+            while(Player.connected) {
                 string message = Player.ReadLine();
-
-                if(GlobalVariable.debugMode) {
-                    Console.WriteLine( message );
+                if(message.Length == 0) {
+                    continue;
                 }
+                ConsoleManager.WriteLine( "Server sent:" + message );
 
                 string method = message.Substring( 0, message.IndexOf( ":" )+1 );
                 message = message.Replace( method, "" );
 
                 switch(method) {
                     case "ConnectionAccepted:":
-                        Player.Name = message;
+                        Player.name = message;
                         this.Dispatcher.Invoke( (Action)(() => { IpAddTB.Text = message; }) );
                         break;
                     case "NickNameInUse:":
@@ -79,11 +80,13 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            Player.Connected = false;
-            Player.WriteLine( "CloseConnection:" );
-            Player.Reader.Close();
-            Player.Writer.Close();
-            Player.TcpClient.Close();
+            if(Player.tcpClient != null) {
+                Player.connected = false;
+                Player.WriteLine( "CloseConnection:" );
+                Player.reader.Close();
+                Player.writer.Close();
+                Player.tcpClient.Close();
+            }
         }
 
         private void Window_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {

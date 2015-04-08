@@ -21,8 +21,7 @@ namespace Client.Map.Sprite {
         private void LoadImage() {
             try {
                 image = new BitmapImage( sourceUrl );
-            } catch(Exception e) {
-                Console.WriteLine( e.StackTrace );
+            } catch(Exception) {
             }
         }
     }
