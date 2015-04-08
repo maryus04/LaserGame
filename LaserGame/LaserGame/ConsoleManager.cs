@@ -21,15 +21,12 @@ namespace Client {
                 if(value == true) {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault( false );
-                    Thread Console = new Thread( () => CreateConsoleWindow() );
+                    Thread Console = new Thread( () => AllocConsole() );
+                    Console.Name = "ConsoleWindow";
                     Console.Start();
                     debugMode = true;
                 }
             }
-        }
-
-        public static void CreateConsoleWindow() {
-            AllocConsole();
         }
 
         public static void Game( string message ) {
