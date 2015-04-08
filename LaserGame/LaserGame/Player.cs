@@ -26,8 +26,14 @@ namespace Client {
         public static int height;
 
         public static void WriteLine( string message ) {
-            writer.WriteLine( message );
-            writer.Flush();
+            try {
+                writer.WriteLine( message );
+                writer.Flush();
+            } catch(Exception) {
+                Player.reader.Close();
+                Player.writer.Close();
+                Player.tcpClient.Close();
+            }
         }
 
         public static string ReadLine() {
