@@ -13,7 +13,9 @@ namespace Client {
         [return: MarshalAs( UnmanagedType.Bool )]
         static extern bool AllocConsole();
 
-        private static bool debugMode;
+        private static readonly int PREFIX_LENGTH = 26;
+        private static bool debugMode = false;
+        private static bool infoMode = false;
 
         public static bool DebugMode {
             get { return debugMode; }
@@ -30,21 +32,37 @@ namespace Client {
         }
 
         public static void Game( string message ) {
+            if(infoMode) return;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine( Prefix( "(Info)(Game)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void GameWarn( string message) {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine( message );
+            Console.WriteLine( Prefix( "(Warn)(Game)" ) + message );
             Console.ResetColor();
         }
 
-        public static void DebugGame( string message ) {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine( message );
-            Console.ResetColor();
-        }
-
-        public static void DebugErrorGame( string message ) {
+        public static void GameError( string message) {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine( message );
+            Console.WriteLine( Prefix( "(Error)(Game)" ) + message );
             Console.ResetColor();
+        }
+
+        public static void DebugGame( string message) {
+            if(debugMode) return;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine( Prefix( "(Debug)(Game)" ) + message );
+            Console.ResetColor();
+        }
+
+        private static string Prefix(string prefix) {
+            String temp=prefix;
+            for(int i = temp.Length; i < PREFIX_LENGTH; i++) {
+                temp = temp + " ";
+            }
+            return temp;
         }
 
     }

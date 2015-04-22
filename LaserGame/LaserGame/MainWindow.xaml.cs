@@ -57,7 +57,7 @@ namespace Client {
             while(Player.connected) {
                 string message = Player.ReadLine();
                 if(message.Length == 0) {
-                    continue;
+                    break;
                 }
 
                 ConsoleManager.DebugGame( "Server sent:" + message );
@@ -71,8 +71,8 @@ namespace Client {
                         ConsoleManager.Game( "Connected as " + Player.name );
                         break;
                     case "NickNameInUse:":
-                        this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Error: Nickname already in use"; }) );
-                        ConsoleManager.DebugErrorGame( "Error: Nickname already in use");
+                        this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Nickname already in use"; }) );
+                        ConsoleManager.GameWarn(  "Nickname already in use" );
                         break;
                 }
             }

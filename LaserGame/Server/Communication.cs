@@ -29,8 +29,11 @@ namespace Server {
             try {
                 while(client.isConnected) {
                     string message = client.ReadLine();
+                    if(message.Length == 0) {
+                        break;
+                    }
 
-                    ConsoleManager.DebugComunication( "--" + client.nickName + " sent:" + message );
+                    ConsoleManager.CommunicationDebug( "--" + client.nickName + " sent:" + message );
 
                     string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
                     message = message.Replace( method, "" );
@@ -56,7 +59,7 @@ namespace Server {
                 client.nickName = name;
                 AcceptConnection();
             } else {
-                ConsoleManager.DebugComunication( "Name \"" + name + "\" already in use. Connection refused." );
+                ConsoleManager.Communication( "Name \"" + name + "\" already in use. Connection refused." );
                 client.WriteLine( "NickNameInUse:" );
             }
         }
@@ -65,13 +68,13 @@ namespace Server {
             Server._nickName.Add( client.nickName, client.tcpClient );
             Server._nickNameByConnect.Add( client.tcpClient, client.nickName );
             client.WriteLine( "ConnectionAccepted:" + client.nickName );
-            ConsoleManager.Comunication( client.nickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
+            ConsoleManager.Communication( client.nickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
         }
 
         private void CloseConnection() {
             Server._nickName.Remove( client.nickName );
             Server._nickNameByConnect.Remove( client.tcpClient );
-            ConsoleManager.Comunication( client.nickName + " is now disconnected from the server." );
+            ConsoleManager.Communication( client.nickName + " is now disconnected from the server." );
             client.Dispose();
 
         }

@@ -22,12 +22,12 @@ namespace Server {
             _nickNameByConnect = new Hashtable( 100 );
             _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
             _chatServer.Start();
-            ConsoleManager.ServerInfo( "Server started" );
+            ConsoleManager.Server( "Server started" );
 
             while(true) {
                 if(_chatServer.Pending()) {
                     TcpClient connection = _chatServer.AcceptTcpClient();
-                    ConsoleManager.ServerInfo( "New client is pending..." );
+                    ConsoleManager.Server( "New client is pending..." );
 
                     Thread startCommunication = new Thread(() => newCommunication(connection));
                     startCommunication.Name = "StartConnetion";

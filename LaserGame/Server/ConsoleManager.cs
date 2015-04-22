@@ -6,25 +6,69 @@ using System.Text;
 namespace Server {
     public class ConsoleManager {
         public static bool debugMode = false;
+        public static bool infoMode = false;
 
-        public static void ServerInfo( string message ) {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine( message );
-                Console.ResetColor();
+        private static readonly int PREFIX_LENGTH = 26;
+
+        public static bool DebugMode {
+            get { return debugMode; }
+            set { debugMode = value; }
         }
 
-        public static void DebugComunication(string message) {
-            if(ConsoleManager.debugMode) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine( message );
-                Console.ResetColor();
-            }
-        }
-
-        public static void Comunication( string message ) {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine( message );
+        public static void Server( string message ) {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine( Prefix( "(Info)(Server)" ) + message );
             Console.ResetColor();
+        }
+
+        public static void ServerWarn( string message, string from ) {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine( Prefix( "(Warn)(Server)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void ServerError( string message, string from ) {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine( Prefix( "(Error)(Server)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void ServerDebug( string message, string from ) {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine( Prefix( "(Debug)(Server)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void Communication( string message ) {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine( Prefix( "(Info)(Comunication)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void CommunicationWarn( string message) {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine( Prefix( "(Warn)(Comunication)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void CommunicationError( string message) {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine( Prefix( "(Error)(Comunication)" ) + message );
+            Console.ResetColor();
+        }
+
+        public static void CommunicationDebug( string message) {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine( Prefix( "(Debug)(Comunication)" ) + message );
+            Console.ResetColor();
+        }
+
+        private static string Prefix( string prefix ) {
+            String temp = prefix;
+            for(int i = temp.Length; i < PREFIX_LENGTH; i++) {
+                temp = temp + " ";
+            }
+            return temp;
         }
     }
 }
