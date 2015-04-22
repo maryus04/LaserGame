@@ -55,7 +55,7 @@ namespace Server {
         }
 
         private void ValidateNickName( string name ) {
-            if(!Server._nickName.Contains( name )) {
+            if(!Server._nickName.Contains( name ) && !"NotYetSet".Equals(name)) {
                 client.nickName = name;
                 AcceptConnection();
             } else {
@@ -73,11 +73,10 @@ namespace Server {
         }
 
         private void CloseConnection() {
+            ConsoleManager.Communication( client.nickName + " is now disconnected from the server." );
             Server._nickName.Remove( client.nickName );
             Server._nickNameByConnect.Remove( client.tcpClient );
-            ConsoleManager.Communication( client.nickName + " is now disconnected from the server." );
             client.Dispose();
-
         }
     }
 }

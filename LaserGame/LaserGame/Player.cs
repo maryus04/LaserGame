@@ -30,9 +30,11 @@ namespace Client {
                 writer.WriteLine( message );
                 writer.Flush();
             } catch(Exception) {
-                Player.reader.Close();
-                Player.writer.Close();
-                Player.tcpClient.Close();
+                if(Player.tcpClient.Connected) {
+                    Player.reader.Close();
+                    Player.writer.Close();
+                    Player.tcpClient.Close();
+                }
             }
         }
 
@@ -40,9 +42,11 @@ namespace Client {
             try {
                 return reader.ReadLine();
             } catch(Exception) {
-                Player.reader.Close();
-                Player.writer.Close();
-                Player.tcpClient.Close();
+                if(Player.tcpClient.Connected) {
+                    Player.reader.Close();
+                    Player.writer.Close();
+                    Player.tcpClient.Close();
+                }
             }
             return "";
         }

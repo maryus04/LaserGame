@@ -24,6 +24,7 @@ namespace Client {
         public MainWindow() {
             ConsoleManager.DebugMode = true; //debug mdoe
             InitializeComponent();
+            
         }
 
         private void NewGame( object sender, RoutedEventArgs e ) {
@@ -31,8 +32,23 @@ namespace Client {
             Player.width = MapParser.ParseMapDimensions().Item1;
             Player.height = MapParser.ParseMapDimensions().Item2;
 
-            Player.tcpClient = new TcpClient();
-            Player.tcpClient.Connect( IpAddTB.Text, 4296 );
+            InitConnection();
+
+            //new GameWindow( _width, _height, PlayerNameTB.Text, IpAddTB.Text );
+
+            //this.Close();
+        }
+
+        private void InitConnection() {
+            try {
+                Player.tcpClient = new TcpClient();
+                Player.tcpClient.Connect( IpAddTB.Text, 4296 );
+            } catch {
+                this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Server not found."; }) );
+                startGameButton.IsEnabled = false;
+                ConsoleManager.GameError( "Server not found." );
+                return;
+            }
 
             Player.writer = new StreamWriter( Player.tcpClient.GetStream() );
             Player.reader = new StreamReader( Player.tcpClient.GetStream() );
@@ -42,10 +58,6 @@ namespace Client {
             ReadIncomming.Start();
 
             SendNickName();
-
-            //new GameWindow( _width, _height, PlayerNameTB.Text, IpAddTB.Text );
-
-            //this.Close();
         }
 
         private void SendNickName() {
@@ -83,7 +95,7 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            if(Player.tcpClient != null) {
+            if(Player.tcpClient.Connected) {
                 Player.connected = false;
                 Player.WriteLine( "CloseConnection:" );
                 Player.reader.Close();
