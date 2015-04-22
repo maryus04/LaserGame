@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.IO;
-using System.Windows.Controls;
 
-namespace Client {
+namespace Server {
     static class MapParser {
 
         private static StreamReader _reader;
@@ -16,8 +15,6 @@ namespace Client {
         }
 
         public static Tuple<int, int> ParseMapDimensions() {
-            //get char count from the first row
-            //get row count
             _reader = new StreamReader( _fileName );
             if((_line = _reader.ReadLine()) != null) {
                 char[] itemsOnRow = _line.ToCharArray();
@@ -26,14 +23,12 @@ namespace Client {
                 string[] lines = _reader.ReadToEnd().Split( new string[] { "\r\n" }, StringSplitOptions.None );
                 _height = lines.Count() + 1;
             }
-            //check if every row and column is the same measure
             if(CheckRowsIntegrity( _width )) {
                 return Tuple.Create( _width, _height );
             }
             return Tuple.Create( 0, 0 );
         }
 
-        //test the character count from the first line with the others
         private static bool CheckRowsIntegrity( int mapWidth ) {
             _reader = new StreamReader( _fileName );
             string fullMap = _reader.ReadToEnd();
