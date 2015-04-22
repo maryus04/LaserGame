@@ -21,13 +21,13 @@ namespace Server {
         private void BeginConnection() {
             client.reader = new StreamReader( client.GetStream() );
             client.writer = new StreamWriter( client.GetStream() );
-            client.isConnected = true;
+            
             ReadMessages();
         }
 
         private void ReadMessages() {
             try {
-                while(client.isConnected) {
+                while(true) {
                     string message = client.ReadLine();
                     if(message.Length == 0) {
                         break;
@@ -67,6 +67,7 @@ namespace Server {
         private void AcceptConnection() {
             Server._nickName.Add( client.nickName, client.tcpClient );
             Server._nickNameByConnect.Add( client.tcpClient, client.nickName );
+            client.isConnected = true;
             client.WriteLine( "ConnectionAccepted:" + client.nickName );
             ConsoleManager.Communication( client.nickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
         }

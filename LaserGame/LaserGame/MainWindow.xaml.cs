@@ -36,7 +36,6 @@ namespace Client {
 
             Player.writer = new StreamWriter( Player.tcpClient.GetStream() );
             Player.reader = new StreamReader( Player.tcpClient.GetStream() );
-            Player.connected = true;
 
             Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
             ReadIncomming.Name = "ReadMessages";
@@ -54,7 +53,7 @@ namespace Client {
         }
 
         private void ReadMessages() {
-            while(Player.connected) {
+            while(true) {
                 string message = Player.ReadLine();
                 if(message.Length == 0) {
                     break;
@@ -69,6 +68,7 @@ namespace Client {
                     case "ConnectionAccepted:":
                         Player.name = message;
                         ConsoleManager.Game( "Connected as " + Player.name );
+                        Player.connected = true;
                         break;
                     case "NickNameInUse:":
                         this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Nickname already in use"; }) );
