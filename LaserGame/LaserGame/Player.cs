@@ -11,44 +11,56 @@ using System.IO;
 namespace Client {
     public static class Player {
 
-        public static string name;
-        public static bool firstClick;
-        public static Rectangle firstPortal;
-        public static Rectangle secondPortal;
+        public static string Name { get; set; }
+        public static bool FirstClick { get; set; }
+        public static Rectangle FirstPortal { get; set; }
+        public static Rectangle SecondPortal { get; set; }
 
-        public static TcpClient tcpClient;
-        public static bool connected;
+        public static TcpClient TcpClient { get; set; }
+        public static bool Connected { get; set; }
 
-        public static StreamWriter writer;
-        public static StreamReader reader;
-
-        public static int width;
-        public static int height;
-
+        public static StreamWriter Writer { get; set; }
+        public static StreamReader Reader { get; set; }
+        
         public static void WriteLine( string message ) {
             try {
-                writer.WriteLine( message );
-                writer.Flush();
+                Writer.WriteLine( message );
+                Writer.Flush();
             } catch(Exception) {
-                if(Player.tcpClient.Connected) {
-                    Player.reader.Close();
-                    Player.writer.Close();
-                    Player.tcpClient.Close();
+                if(TcpClient.Connected) {
+                    Reader.Close();
+                    Writer.Close();
+                    TcpClient.Close();
                 }
             }
         }
 
         public static string ReadLine() {
             try {
-                return reader.ReadLine();
+                return Reader.ReadLine();
             } catch(Exception) {
-                if(Player.tcpClient.Connected) {
-                    Player.reader.Close();
-                    Player.writer.Close();
-                    Player.tcpClient.Close();
+                if(TcpClient.Connected) {
+                    Reader.Close();
+                    Writer.Close();
+                    TcpClient.Close();
                 }
             }
             return "";
+        }
+
+        public static void CloseConnection() {
+            if(TcpClient != null && TcpClient.Connected) {
+                Connected = false;
+                WriteLine( "CloseConnection:" );
+                Reader.Close();
+                Writer.Close();
+                TcpClient.Close();
+            }
+        }
+
+        public static void InitializeStream() {
+            Writer = new StreamWriter( TcpClient.GetStream() );
+            Reader = new StreamReader( TcpClient.GetStream() );
         }
 
     }

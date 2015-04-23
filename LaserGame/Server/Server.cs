@@ -5,6 +5,7 @@ using System.Threading;
 using Chat = System.Net;
 using System.Collections;
 using System.Net.Sockets;
+using System.Windows.Forms;
 
 namespace Server {
     public class Server {
@@ -13,16 +14,30 @@ namespace Server {
         public static Hashtable _nickNameByConnect;
 
         public static void Main() {
-            ConsoleManager.debugMode = true; //debug mode
+            if(Environment.MachineName == "NWRMP01") {
+                DialogResult dr = MessageBox.Show( "Would you like to run in debug mode?", "Debug", MessageBoxButtons.YesNo );
+                switch(dr) {
+                    case DialogResult.Yes:
+                        ConsoleManager.debugMode = true;
+                        break;
+                    case DialogResult.No:
+                        ConsoleManager.debugMode = false;
+                        break;
+                }
+            }
             new Server();
         }
 
         public Server() {
+            MapParser.SetMapName( "initial.map1" );
+            //Player.width = MapParser.ParseMapDimensions().Item1;
+            //Player.height = MapParser.ParseMapDimensions().Item2;
+
             _nickName = new Hashtable( 100 );
             _nickNameByConnect = new Hashtable( 100 );
             _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
             _chatServer.Start();
-            ConsoleManager.Server( "Server started" );
+            ConsoleManager.Server( "Server started on " + Environment.MachineName );
 
             while(true) {
                 if(_chatServer.Pending()) {

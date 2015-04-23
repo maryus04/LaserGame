@@ -11,8 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Forms;
-using Client.Map.Sprite;
+using Forms = System.Windows.Forms;
 using System.Drawing;
 using System.Net.Sockets;
 using System.IO;
@@ -22,72 +21,54 @@ namespace Client {
     public partial class MainWindow : Window {
 
         public MainWindow() {
-            ConsoleManager.DebugMode = true; //debug mdoe
+            ConsoleManager.SetDebugMode();
             InitializeComponent();
-            
         }
 
         private void NewGame( object sender, RoutedEventArgs e ) {
-            MapParser.SetMapName( "initial.map1" );
-            Player.width = MapParser.ParseMapDimensions().Item1;
-            Player.height = MapParser.ParseMapDimensions().Item2;
-
             InitConnection();
-
-            //new GameWindow( _width, _height, PlayerNameTB.Text, IpAddTB.Text );
-
-            //this.Close();
+            SendNickName();
         }
 
-        private void InitConnection() {
+        private bool InitConnection() {
+            if(Player.TcpClient != null) return false;
+            if(!InitializeConnection()) return false;
+
+            Player.InitializeStream();
+
+            ReadMessages();
+
+            return true;
+        }
+
+        private bool InitializeConnection() {
             try {
-                Player.tcpClient = new TcpClient();
-                Player.tcpClient.Connect( IpAddTB.Text, 4296 );
+                Player.TcpClient = new TcpClient();
+                Player.TcpClient.Connect( IpAddTB.Text, 4296 );
             } catch {
                 this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Server not found."; }) );
-                startGameButton.IsEnabled = false;
                 ConsoleManager.GameError( "Server not found." );
-                return;
+                return false;
             }
+            return true;
+        }
 
-            Player.writer = new StreamWriter( Player.tcpClient.GetStream() );
-            Player.reader = new StreamReader( Player.tcpClient.GetStream() );
-
-            Thread ReadIncomming = new Thread( new ThreadStart( ReadMessages ) );
+        private void ReadMessages() {
+            Thread ReadIncomming = new Thread( () => MessageReader.ReadMessages() );
+            
+            MessageReader.SetMainWindow( this );
+            ReadIncomming.SetApartmentState( ApartmentState.STA );
             ReadIncomming.Name = "ReadMessages";
-            ReadIncomming.Start();
 
-            SendNickName();
+            ReadIncomming.Start();
         }
 
         private void SendNickName() {
             Player.WriteLine( "MyName:" + PlayerNameTB.Text );
         }
 
-        private void ReadMessages() {
-            while(true) {
-                string message = Player.ReadLine();
-                if(message.Length == 0) {
-                    break;
-                }
-
-                ConsoleManager.DebugGame( "Server sent:" + message );
-
-                string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
-                message = message.Replace( method, "" );
-
-                switch(method) {
-                    case "ConnectionAccepted:":
-                        Player.name = message;
-                        ConsoleManager.Game( "Connected as " + Player.name );
-                        Player.connected = true;
-                        break;
-                    case "NickNameInUse:":
-                        this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Nickname already in use"; }) );
-                        ConsoleManager.GameWarn(  "Nickname already in use" );
-                        break;
-                }
-            }
+        public void SetError(string error) {
+            ErrorLabel.Content = error;
         }
 
         private void ExitGame( object sender, RoutedEventArgs e ) {
@@ -95,13 +76,7 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            if(Player.tcpClient.Connected) {
-                Player.connected = false;
-                Player.WriteLine( "CloseConnection:" );
-                Player.reader.Close();
-                Player.writer.Close();
-                Player.tcpClient.Close();
-            }
+            Player.CloseConnection();
         }
 
         private void Window_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {

@@ -11,17 +11,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Client.LaserComponents;
+using System.Threading;
 
 namespace Client {
     public partial class GameWindow : Window {
         
         public GameWindow() {
             InitializeComponent();
+            InitializeComponents();
         }
 
-        public GameWindow( int width, int height, string name, string ipAdd ) {
-            InitializeComponent();
-
+        private void InitializeComponents(){
             Laser laser = new Laser( gameCanvas, debugCanvas );
 
             laser.buildFirstLine();
@@ -32,18 +32,18 @@ namespace Client {
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
             Rectangle rect = CreatePortal(e.GetPosition(gameCanvas));
 
-            if(Player.firstClick) {
-                gameCanvas.Children.Remove( Player.firstPortal );
+            if(Player.FirstClick) {
+                gameCanvas.Children.Remove( Player.FirstPortal );
 
-                Player.firstPortal = rect;
-                Player.firstClick = false;
+                Player.FirstPortal = rect;
+                Player.FirstClick = false;
 
                 gameCanvas.Children.Add( rect );
             } else {
-                gameCanvas.Children.Remove( Player.secondPortal );
+                gameCanvas.Children.Remove( Player.SecondPortal );
                 
-                Player.secondPortal = rect;
-                Player.firstClick = true;
+                Player.SecondPortal = rect;
+                Player.FirstClick = true;
 
                 gameCanvas.Children.Add( rect );
             }

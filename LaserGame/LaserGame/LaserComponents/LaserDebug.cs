@@ -13,6 +13,7 @@ namespace Client {
         public static List<Point> pointsToBeDrawn = new List<Point>();
 
         public static void DrawPoint(Canvas canvas, Point point) {
+            if(!ConsoleManager.DebugMode) return;
             var ellipse = new Ellipse() { Width = 8, Height = 8, Fill= new SolidColorBrush( Colors.Blue ), Stroke = new SolidColorBrush( Colors.Blue ) };
             Canvas.SetLeft( ellipse, point.X-4 );
             Canvas.SetTop( ellipse, point.Y-4 );
@@ -20,10 +21,12 @@ namespace Client {
         }
 
         public static void DeletePointList( Canvas canvas ) {
+            if(!ConsoleManager.DebugMode) return;
             pointsToBeDrawn = new List<Point>();
         }
 
         public static void DeletePointsFromCanvas( Canvas canvas ) {
+            if(!ConsoleManager.DebugMode) return;
             canvas.Children.RemoveRange( 0, canvas.Children.Count );
         }
 

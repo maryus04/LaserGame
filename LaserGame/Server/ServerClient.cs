@@ -8,49 +8,54 @@ using System.Net;
 
 namespace Server {
     public class ServerClient {
-        public TcpClient tcpClient;
+        private string nickName = "NotYetSet";
+        
+        public TcpClient TcpClient { get; set; }
 
-        public StreamReader reader;
-        public StreamWriter writer;
-
-        public string nickName = "NotYetSet";
+        public StreamReader Reader { get; set; }
+        public StreamWriter Writer { get; set; }
+        
+        public string NickName {
+            get { return nickName; }
+            set { nickName = value; } 
+        } 
 
         public bool isConnected;
 
         public NetworkStream GetStream() {
-            return tcpClient.GetStream();
+            return TcpClient.GetStream();
         }
 
         public void WriteLine( string message ) {
-            writer.WriteLine( message );
-            writer.Flush();
+            Writer.WriteLine( message );
+            Writer.Flush();
         }
 
         public bool IsTcpConnected() {
-            return tcpClient.Connected;
+            return TcpClient.Connected;
         }
 
         public String ReadLine() {
-            return reader.ReadLine();
+            return Reader.ReadLine();
         }
 
         public void Flush() {
-            writer.Flush();
+            Writer.Flush();
         }
 
         public void Dispose() {
             isConnected = false;
-            reader.Close();
-            writer.Close();
-            tcpClient.Close();
+            Reader.Close();
+            Writer.Close();
+            TcpClient.Close();
         }
 
         public int GetPort(){
-            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Port;
+            return ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Port;
         }
 
         public string GetIp() {
-            return ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
+            return ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Address.ToString();
         }
     }
 }

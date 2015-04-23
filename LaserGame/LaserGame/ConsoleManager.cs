@@ -31,6 +31,20 @@ namespace Client {
             }
         }
 
+        public static void SetDebugMode() {
+            if(Environment.MachineName == "NWRMP01") {
+                DialogResult dr = MessageBox.Show( "Would you like to run in debug mode?", "Debug", MessageBoxButtons.YesNo );
+                switch(dr) {
+                    case DialogResult.Yes:
+                        ConsoleManager.DebugMode = true;
+                        break;
+                    case DialogResult.No:
+                        ConsoleManager.DebugMode = false;
+                        break;
+                }
+            }
+        }
+
         public static void Game( string message ) {
             if(infoMode) return;
             Console.ForegroundColor = ConsoleColor.Cyan;

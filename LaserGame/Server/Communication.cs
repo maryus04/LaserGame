@@ -13,14 +13,14 @@ namespace Server {
         ServerClient client = new ServerClient();
 
         public Communication( TcpClient tcpClient ) {
-            client.tcpClient = tcpClient;
+            client.TcpClient = tcpClient;
 
             BeginConnection();
         }
 
         private void BeginConnection() {
-            client.reader = new StreamReader( client.GetStream() );
-            client.writer = new StreamWriter( client.GetStream() );
+            client.Reader = new StreamReader( client.GetStream() );
+            client.Writer = new StreamWriter( client.GetStream() );
             
             ReadMessages();
         }
@@ -33,7 +33,7 @@ namespace Server {
                         break;
                     }
 
-                    ConsoleManager.CommunicationDebug( "--" + client.nickName + " sent:" + message );
+                    ConsoleManager.CommunicationDebug( "--" + client.NickName + " sent:" + message );
 
                     string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
                     message = message.Replace( method, "" );
@@ -56,7 +56,7 @@ namespace Server {
 
         private void ValidateNickName( string name ) {
             if(!Server._nickName.Contains( name ) && !"NotYetSet".Equals(name)) {
-                client.nickName = name;
+                client.NickName = name;
                 AcceptConnection();
             } else {
                 ConsoleManager.Communication( "Name \"" + name + "\" already in use. Connection refused." );
@@ -65,17 +65,17 @@ namespace Server {
         }
 
         private void AcceptConnection() {
-            Server._nickName.Add( client.nickName, client.tcpClient );
-            Server._nickNameByConnect.Add( client.tcpClient, client.nickName );
+            Server._nickName.Add( client.NickName, client.TcpClient );
+            Server._nickNameByConnect.Add( client.TcpClient, client.NickName );
             client.isConnected = true;
-            client.WriteLine( "ConnectionAccepted:" + client.nickName );
-            ConsoleManager.Communication( client.nickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
+            client.WriteLine( "ConnectionAccepted:" + client.NickName );
+            ConsoleManager.Communication( client.NickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
         }
 
         private void CloseConnection() {
-            ConsoleManager.Communication( client.nickName + " is now disconnected from the server." );
-            Server._nickName.Remove( client.nickName );
-            Server._nickNameByConnect.Remove( client.tcpClient );
+            ConsoleManager.Communication( client.NickName + " is now disconnected from the server." );
+            Server._nickName.Remove( client.NickName );
+            Server._nickNameByConnect.Remove( client.TcpClient );
             client.Dispose();
         }
     }
