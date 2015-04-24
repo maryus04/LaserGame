@@ -22,7 +22,7 @@ namespace Client {
                     break;
                 }
 
-                ConsoleManager.DebugGame( "Server sent:" + message );
+                DebugManager.DebugGame( "Server sent:" + message );
 
                 string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
                 message = message.Replace( method, "" );
@@ -30,14 +30,14 @@ namespace Client {
                 switch(method) {
                     case "ConnectionAccepted:":
                         Player.Name = message;
-                        ConsoleManager.Game( "Connected as " + Player.Name );
+                        DebugManager.Game( "Connected as " + Player.Name );
                         Player.Connected = true;
                         _main.Dispatcher.Invoke( (Action)(() => { game = new GameWindow(); }) );
                         _main.Dispatcher.Invoke( (Action)(() => { _main.Close(); }) );
                         break;
                     case "NickNameInUse:":
                         _main.Dispatcher.Invoke( (Action)(() => { _main.SetError( "Nickname already in use" ); }) );
-                        ConsoleManager.GameWarn( "Nickname already in use" );
+                        DebugManager.GameWarn( "Nickname already in use" );
                         break;
                 }
             }

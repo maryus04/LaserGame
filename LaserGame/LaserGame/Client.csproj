@@ -75,9 +75,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="LaserComponents\LaserDebug.cs" />
-    <Compile Include="ConsoleManager.cs" />
-    <Compile Include="LaserComponents\Laser.cs" />
+    <Compile Include="CanvasBehavior\Behavior.cs" />
+    <Compile Include="CanvasBehavior\Mechanic.cs" />
+    <Compile Include="DebugManager.cs" />
+    <Compile Include="CanvasComponents\Laser.cs" />
     <Compile Include="GameWindow.xaml.cs">
       <DependentUpon>GameWindow.xaml</DependentUpon>
     </Compile>
@@ -101,6 +102,7 @@
   <ItemGroup>
     <Compile Include="MessageReader.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="CanvasComponents\Portal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

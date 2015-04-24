@@ -16,12 +16,15 @@ using System.Drawing;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Client {
     public partial class MainWindow : Window {
 
+        
+
         public MainWindow() {
-            ConsoleManager.SetDebugMode();
+            DebugManager.SetDebugMode();
             InitializeComponent();
         }
 
@@ -41,13 +44,15 @@ namespace Client {
             return true;
         }
 
+        
+
         private bool InitializeConnection() {
             try {
                 Player.TcpClient = new TcpClient();
                 Player.TcpClient.Connect( IpAddTB.Text, 4296 );
             } catch {
                 this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Server not found."; }) );
-                ConsoleManager.GameError( "Server not found." );
+                DebugManager.GameError( "Server not found." );
                 return false;
             }
             return true;
@@ -76,7 +81,9 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            Player.CloseConnection();
+            if(!GameWindow.isGameStarted) {
+                Player.CloseConnection();
+            }
         }
 
         private void Window_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {

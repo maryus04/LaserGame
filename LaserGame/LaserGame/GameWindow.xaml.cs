@@ -11,57 +11,42 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Client.LaserComponents;
+using Client.CanvasBehavior;
 using System.Threading;
 
 namespace Client {
     public partial class GameWindow : Window {
-        
+
+        private Laser _laser;
+        private Portal _portal;
+
+        private static bool gameStarted = false;
+
+        public static bool isGameStarted { set { gameStarted = value; } get { return gameStarted; } }
+
         public GameWindow() {
+            isGameStarted = true;
             InitializeComponent();
-            InitializeComponents();
-        }
 
-        private void InitializeComponents(){
-            Laser laser = new Laser( gameCanvas, debugCanvas );
+            _laser = new Laser( gameCanvas, debugCanvas );
+            _portal = new Portal( gameCanvas );
 
-            laser.buildFirstLine();
+            _laser.buildFirstLine();
 
             this.Show();
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
-            Rectangle rect = CreatePortal(e.GetPosition(gameCanvas));
+            Rectangle rect = _portal.CreatePortal( e.GetPosition( gameCanvas ) );
 
-            if(Player.FirstClick) {
-                gameCanvas.Children.Remove( Player.FirstPortal );
+            _portal.AddPortal( rect );
 
-                Player.FirstPortal = rect;
-                Player.FirstClick = false;
-
-                gameCanvas.Children.Add( rect );
-            } else {
-                gameCanvas.Children.Remove( Player.SecondPortal );
-                
-                Player.SecondPortal = rect;
-                Player.FirstClick = true;
-
-                gameCanvas.Children.Add( rect );
-            }
-
-            Laser.ExctractIntersectionPoints();
+            Behavior.LaserIntersectionAllCanvasRects( _laser.GetAllLines() );
         }
 
-        private Rectangle CreatePortal( Point point ) {
-            Rectangle rect = new System.Windows.Shapes.Rectangle {
-                Width = 10,
-                Height = 10,
-                Stroke = System.Windows.Media.Brushes.Purple,
-                StrokeThickness = 10
-            };
-            Canvas.SetLeft( rect, point.X - 5 );
-            Canvas.SetTop( rect, point.Y - 5 );
 
-            return rect;
+        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
+            Player.CloseConnection();
         }
     }
 }

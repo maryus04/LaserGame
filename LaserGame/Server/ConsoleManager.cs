@@ -34,6 +34,7 @@ namespace Server {
         }
 
         public static void ServerDebug( string message, string from ) {
+            if(!debugMode) return;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine( Prefix( "(Debug)(Server)" ) + message );
             Console.ResetColor();
@@ -58,6 +59,7 @@ namespace Server {
         }
 
         public static void CommunicationDebug( string message) {
+            if(!debugMode) return;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine( Prefix( "(Debug)(Comunication)" ) + message );
             Console.ResetColor();

@@ -63,5 +63,25 @@ namespace Client {
             Reader = new StreamReader( TcpClient.GetStream() );
         }
 
+        public static void SetCurrentPortal(Rectangle rect) {
+            if(FirstClick) {
+                FirstPortal = rect;
+                FirstClick = false;
+            } else {
+                SecondPortal = rect;
+                FirstClick = true;
+            }
+        }
+
+        public static Rectangle GetCurrentPortal() {
+            if(FirstClick && FirstPortal != null && SecondPortal != null) {
+                return FirstPortal;
+            } else if(!FirstClick && FirstPortal != null && SecondPortal != null) {
+                return SecondPortal;
+            } else {
+                return null;
+            }
+        }
+
     }
 }
