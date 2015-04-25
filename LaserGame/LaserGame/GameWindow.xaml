@@ -5,10 +5,6 @@
         Title="Second" Height="330" Width="610">
     <Grid x:Name="GameGrid">
         <Canvas x:Name="gameCanvas" MouseDown="Canvas_Clicked">
-            <Rectangle x:Name="Testion" Fill="Green" Stroke="Black" HorizontalAlignment="Left" Width="200" Height="300" Canvas.Left="400" Canvas.Top="0">
-            </Rectangle>
-            <Rectangle x:Name="testica" Fill="Green" Stroke="Black" HorizontalAlignment="Left" Width="188" Height="127" Canvas.Left="109" Canvas.Top="126">
-            </Rectangle>
         </Canvas>
         <Canvas x:Name="debugCanvas" MouseDown="Canvas_Clicked">
         </Canvas>
