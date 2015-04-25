@@ -17,8 +17,8 @@ namespace Client.LaserComponents {
         private static Canvas _gameCanvas;
 
         public Laser( Canvas gameCanvas ,Canvas debugCanvas) {
-            Behavior.DebugCanvas = debugCanvas;
-            Behavior.GameCanvas = gameCanvas;
+            LaserBehavior.DebugCanvas = debugCanvas;
+            LaserBehavior.GameCanvas = gameCanvas;
             _gameCanvas = gameCanvas;
             _laserLines = new ObservableCollection<Line>(); // TODO: use this to autoupdate the laser after a intersection occured
             _laserLines.CollectionChanged += ListChanged;
@@ -48,7 +48,7 @@ namespace Client.LaserComponents {
         }
 
         private void ListChanged( object sender, EventArgs e ) {
-            Behavior.IntersectionLineAllCanvasRects( GetLastLine() );
+            LaserBehavior.IntersectionLineAllCanvasRects( GetLastLine() );
         }
 
         
