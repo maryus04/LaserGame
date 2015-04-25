@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Shapes;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Client {
     class Portal {
@@ -22,10 +23,10 @@ namespace Client {
         }
 
         public Rectangle CreatePortal( Point point ) {
-            Rectangle rect = new System.Windows.Shapes.Rectangle {
+            Rectangle rect = new Rectangle {
                 Width = 10,
                 Height = 10,
-                Stroke = System.Windows.Media.Brushes.Purple,
+                Stroke = Brushes.Purple,
                 StrokeThickness = 10
             };
             Canvas.SetLeft( rect, point.X - 5 );
