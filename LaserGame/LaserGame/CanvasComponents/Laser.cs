@@ -20,7 +20,7 @@ namespace Client.LaserComponents {
             Behavior.DebugCanvas = debugCanvas;
             Behavior.GameCanvas = gameCanvas;
             _gameCanvas = gameCanvas;
-            _laserLines = new ObservableCollection<Line>(); // TODO: use this to autoupdate the laser after a intersection is occured
+            _laserLines = new ObservableCollection<Line>(); // TODO: use this to autoupdate the laser after a intersection occured
             _laserLines.CollectionChanged += ListChanged;
         }
 
