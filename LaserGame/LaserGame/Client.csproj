@@ -77,6 +77,7 @@
     </ApplicationDefinition>
     <Compile Include="CanvasBehavior\Behavior.cs" />
     <Compile Include="CanvasBehavior\Mechanic.cs" />
+    <Compile Include="CanvasComponents\BasicBlock.cs" />
     <Compile Include="DebugManager.cs" />
     <Compile Include="CanvasComponents\Laser.cs" />
     <Compile Include="GameWindow.xaml.cs">
