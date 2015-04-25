@@ -8,7 +8,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 
 namespace Client.CanvasBehavior {
-    static class Behavior {
+    static class LaserBehavior {
 
         private static Canvas _gameCanvas;
         private static Canvas _debugCanvas;
@@ -43,7 +43,7 @@ namespace Client.CanvasBehavior {
             DebugManager.DebugLaser( _debugCanvas );
         }
 
-        public static void IntersectionLineAllCanvasRects(Line lastLine) {
+        public static void IntersectionLineAllCanvasRects( Line lastLine ) {
             var child = _gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
 
