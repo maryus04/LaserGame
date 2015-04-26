@@ -19,38 +19,44 @@ namespace Client {
 
         private static readonly int PREFIX_LENGTH = 26;
         private static bool _debugMode = false;
-        private static bool infoMode = false;
 
-        public static bool DebugMode {
-            get { return _debugMode; }
-            set {
-                if(value == true) {
-                    Forms.Application.EnableVisualStyles();
-                    Forms.Application.SetCompatibleTextRenderingDefault( false );
-                    Thread Console = new Thread( () => AllocConsole() );
-                    Console.Name = "ConsoleWindow";
-                    Console.Start();
-                    _debugMode = true;
+        public static bool DebugMode { get { return _debugMode; } set { _debugMode = value; } }
+
+        public static void EnableConsole() {
+            if(Environment.MachineName == "NWRMP01") {
+                Forms.DialogResult dr = Forms.MessageBox.Show( "Would you like to attach the console?", "DebugManager", Forms.MessageBoxButtons.YesNo );
+                switch(dr) {
+                    case Forms.DialogResult.Yes:
+                        CreateConsole();
+                        EnableDebug();
+                        break;
+                    case Forms.DialogResult.No:
+                        break;
                 }
             }
         }
 
-        public static void SetDebugMode() {
-            if(Environment.MachineName == "NWRMP01") {
-                Forms.DialogResult dr = Forms.MessageBox.Show( "Would you like to run in debug mode?", "Debug", Forms.MessageBoxButtons.YesNo );
-                switch(dr) {
-                    case Forms.DialogResult.Yes:
-                        DebugManager.DebugMode = true;
-                        break;
-                    case Forms.DialogResult.No:
-                        DebugManager.DebugMode = false;
-                        break;
-                }
+        public static void EnableDebug() {
+            Forms.DialogResult dr = Forms.MessageBox.Show( "Would you like to run in debug mode?", "Debug", Forms.MessageBoxButtons.YesNo );
+            switch(dr) {
+                case Forms.DialogResult.Yes:
+                    DebugManager.DebugMode = true;
+                    break;
+                case Forms.DialogResult.No:
+                    DebugManager.DebugMode = false;
+                    break;
             }
+        }
+
+        private static void CreateConsole() {
+            Forms.Application.EnableVisualStyles();
+            Forms.Application.SetCompatibleTextRenderingDefault( false );
+            Thread Console = new Thread( () => AllocConsole() );
+            Console.Name = "ConsoleWindow";
+            Console.Start();
         }
 
         public static void Game( string message ) {
-            if(infoMode) return;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine( Prefix( "(Info)(Game)" ) + message );
             Console.ResetColor();
@@ -69,7 +75,7 @@ namespace Client {
         }
 
         public static void DebugGame( string message) {
-            if(_debugMode) return;
+            if(!_debugMode) return;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine( Prefix( "(Debug)(Game)" ) + message );
             Console.ResetColor();
