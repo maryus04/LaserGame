@@ -40,14 +40,10 @@ namespace Server {
 
                     switch(method) {
                         case "MyName:":
-                            Thread acceptConnection = new Thread( () => ValidateNickName( message ) );
-                            acceptConnection.Name = "AcceptConnetion";
-                            acceptConnection.Start();
+                            ValidateNickName( message );
                             break;
                         case "CloseConnection:":
-                            Thread closeConnection = new Thread( () => CloseConnection() );
-                            closeConnection.Name = "CloseConnetion";
-                            closeConnection.Start();
+                            CloseConnection();
                             break;
                     }
                 }
