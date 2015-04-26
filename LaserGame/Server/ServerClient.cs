@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.IO;
 using System.Net;
+using System.Drawing;
 
 namespace Server {
     public class ServerClient {
@@ -14,7 +15,12 @@ namespace Server {
 
         public StreamReader Reader { get; set; }
         public StreamWriter Writer { get; set; }
-        
+
+        public bool FirstClick { get; set; }
+
+        public Rectangle FirstPortal { get; set; }
+        public Rectangle SecondPortal { get; set; }
+
         public string NickName {
             get { return nickName; }
             set { nickName = value; } 

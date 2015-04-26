@@ -11,7 +11,6 @@ namespace Server {
     public class Server {
         TcpListener _chatServer;
         public static Hashtable _nickName;
-        public static Hashtable _nickNameByConnect;
 
         public static void Main() {
             if(Environment.MachineName == "NWRMP01") {
@@ -34,7 +33,6 @@ namespace Server {
             //Player.height = MapParser.ParseMapDimensions().Item2;
 
             _nickName = new Hashtable( 100 );
-            _nickNameByConnect = new Hashtable( 100 );
             _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
             _chatServer.Start();
             ConsoleManager.Server( "Server started on " + Environment.MachineName );

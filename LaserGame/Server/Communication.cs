@@ -7,6 +7,8 @@ using System.Collections;
 using Server;
 using System.Net.Sockets;
 using System.Security.Permissions;
+using Server.Handlers;
+using System.Drawing;
 
 namespace Server {
     class Communication {
@@ -45,9 +47,24 @@ namespace Server {
                         case "CloseConnection:":
                             CloseConnection();
                             break;
+                        case "PortalCreated:":
+                            PortalCreated(message);
+                            break;
                     }
                 }
             } catch(Exception) { }
+        }
+
+        private void PortalCreated(string message) {
+            Tuple<int,int> points = PortalHandler.GetPointsFromMessage(message);
+            Rectangle portal = new Rectangle( points.Item1 - 5, points.Item2 - 5, 10, 10 );
+            if(!PortalHandler.IsPortalIntersectingPortal( portal )) {
+                PortalHandler.SetCurrentPortal( client, portal );
+                client.WriteLine( "PortalAccepted:COORD:" + points.Item1 + "," + points.Item2 + "ENDCOORD" );
+                ConsoleManager.Communication( client.NickName + " created a portal at " + points.Item1 + "," + points.Item2 );
+            } else {
+                client.WriteLine( "PortalDenied:" + points.Item1 + "," + points.Item2 + " intersecting another portal." );
+            }
         }
 
         private void ValidateNickName( string name ) {
@@ -61,8 +78,7 @@ namespace Server {
         }
 
         private void AcceptConnection() {
-            Server._nickName.Add( client.NickName, client.TcpClient );
-            Server._nickNameByConnect.Add( client.TcpClient, client.NickName );
+            Server._nickName.Add( client.NickName, client );
             client.isConnected = true;
             client.WriteLine( "ConnectionAccepted:" + client.NickName );
             ConsoleManager.Communication( client.NickName + " is now connected to server." + " Address " + client.GetIp() + " Port:" + client.GetPort() );
@@ -71,7 +87,6 @@ namespace Server {
         private void CloseConnection() {
             ConsoleManager.Communication( client.NickName + " is now disconnected from the server." );
             Server._nickName.Remove( client.NickName );
-            Server._nickNameByConnect.Remove( client.TcpClient );
             client.Dispose();
         }
     }

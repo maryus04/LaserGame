@@ -12,9 +12,6 @@ namespace Client {
     public static class Player {
 
         public static string Name { get; set; }
-        public static bool FirstClick { get; set; }
-        public static Rectangle FirstPortal { get; set; }
-        public static Rectangle SecondPortal { get; set; }
 
         public static TcpClient TcpClient { get; set; }
         public static bool Connected { get; set; }
@@ -61,26 +58,6 @@ namespace Client {
         public static void InitializeStream() {
             Writer = new StreamWriter( TcpClient.GetStream() );
             Reader = new StreamReader( TcpClient.GetStream() );
-        }
-
-        public static void SetCurrentPortal(Rectangle rect) {
-            if(FirstClick) {
-                FirstPortal = rect;
-                FirstClick = false;
-            } else {
-                SecondPortal = rect;
-                FirstClick = true;
-            }
-        }
-
-        public static Rectangle GetCurrentPortal() {
-            if(FirstClick && FirstPortal != null && SecondPortal != null) {
-                return FirstPortal;
-            } else if(!FirstClick && FirstPortal != null && SecondPortal != null) {
-                return SecondPortal;
-            } else {
-                return null;
-            }
         }
 
     }

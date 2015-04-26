@@ -75,7 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CanvasBehavior\Behavior.cs" />
+    <Compile Include="CanvasBehavior\LaserBehavior.cs" />
     <Compile Include="CanvasBehavior\Mechanic.cs" />
     <Compile Include="CanvasComponents\Block.cs" />
     <Compile Include="DebugManager.cs" />

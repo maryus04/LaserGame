@@ -24,13 +24,17 @@ namespace Client {
         
 
         public MainWindow() {
-            DebugManager.SetDebugMode();
+            DebugManager.EnableConsole();
             InitializeComponent();
         }
 
         private void NewGame( object sender, RoutedEventArgs e ) {
             InitConnection();
             SendNickName();
+        }
+
+        public void StartGame() {
+            this.Dispatcher.Invoke( (Action)(() => { this.Close(); new GameWindow(); }) );
         }
 
         private bool InitConnection() {
@@ -43,8 +47,6 @@ namespace Client {
 
             return true;
         }
-
-        
 
         private bool InitializeConnection() {
             try {
@@ -73,7 +75,7 @@ namespace Client {
         }
 
         public void SetError(string error) {
-            ErrorLabel.Content = error;
+            this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = error; ; }) );
         }
 
         private void ExitGame( object sender, RoutedEventArgs e ) {

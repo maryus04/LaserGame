@@ -10,19 +10,32 @@ using System.Windows.Media;
 namespace Client {
     class Portal {
 
-        private Canvas _gameCanvas;
+        private static Canvas _gameCanvas;
+
+        public static bool FirstClick { get; set; }
+
+        public static Rectangle FirstPortal { get; set; }
+        public static Rectangle SecondPortal { get; set; }
 
         public Portal( Canvas gameCanvas ) {
             _gameCanvas = gameCanvas;
         }
 
-        public void AddPortal( Rectangle rect ) {
-            _gameCanvas.Children.Remove( Player.GetCurrentPortal() );
-            Player.SetCurrentPortal( rect );
+        public static void AddPlayerPortal( Rectangle rect ) {
+            RemovePortal( GetCurrentPortal() );
+            SetCurrentPortal( rect );
+            DrawPortal( rect );
+        }
+
+        public static void DrawPortal( Rectangle rect ) {
             _gameCanvas.Children.Add( rect );
         }
 
-        public Rectangle CreatePortal( Point point ) {
+        public static void RemovePortal( Rectangle rect ) {
+            _gameCanvas.Children.Remove( GetCurrentPortal() );
+        }
+
+        public static Rectangle CreatePortal( Point point ) {
             Rectangle rect = new Rectangle {
                 Width = 10,
                 Height = 10,
@@ -33,6 +46,35 @@ namespace Client {
             Canvas.SetTop( rect, point.Y - 5 );
 
             return rect;
+        }
+
+        public static void SetCurrentPortal( Rectangle rect ) {
+            if(FirstClick) {
+                FirstPortal = rect;
+                FirstClick = false;
+            } else {
+                SecondPortal = rect;
+                FirstClick = true;
+            }
+        }
+
+        public static Rectangle GetCurrentPortal() {
+            if(FirstClick && FirstPortal != null && SecondPortal != null) {
+                return FirstPortal;
+            } else if(!FirstClick && FirstPortal != null && SecondPortal != null) {
+                return SecondPortal;
+            } else {
+                return null;
+            }
+        }
+
+        public static Tuple<int, int> GetPointsFromMessage( string message ) {
+            message = message.Substring( message.IndexOf( "COORD:" ) + 6, (message.IndexOf( "ENDCOORD" )) - (message.IndexOf( "COORD:" ) + 6) );
+            string x = message.Substring( 0, (message.IndexOf( "," )) );
+            message = message.Replace( x + ",", "" );
+            string y = message.Substring( 0, message.Length );
+
+            return Tuple.Create( Int32.Parse( x ), Int32.Parse( y ) );
         }
 
     }

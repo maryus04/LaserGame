@@ -26,6 +26,8 @@ namespace Client {
 
         public GameWindow() {
             isGameStarted = true;
+            MessageReader.SetGameWindow( this );
+            
             InitializeComponent();
 
             _laser = new Laser( gameCanvas, debugCanvas );
@@ -38,17 +40,22 @@ namespace Client {
             this.Show();
         }
 
+        public void CanvasChanged( ) {
+            DebugManager.DebugGame( "Canvas changed. Updating laser intersections" );
+            this.Dispatcher.Invoke( (Action)(() => { LaserBehavior.LaserIntersectionAllCanvasRects( _laser.GetAllLines() ); }) );
+        }
+
+        public void PortalAccepted(int x,int y) {
+            this.Dispatcher.Invoke( (Action)(() => { Portal.AddPlayerPortal( Portal.CreatePortal( new Point( x, y ) ) ); }) );
+        }
+
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
             gameCanvas.Children.Add( Block.Create( 200, 300, 400, 0, Brushes.Green ));
             gameCanvas.Children.Add( Block.Create( 188,127,109,126,Brushes.Green ));
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
-            Rectangle rect = _portal.CreatePortal( e.GetPosition( gameCanvas ) );
-
-            _portal.AddPortal( rect );
-
-            LaserBehavior.LaserIntersectionAllCanvasRects( _laser.GetAllLines() );
+            Player.WriteLine( "PortalCreated:COORD:" + e.GetPosition( gameCanvas ).X + "," + e.GetPosition( gameCanvas ).Y + "ENDCOORD" );
         }
 
 

@@ -4,21 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Shapes;
 
 namespace Client {
     class MessageReader {
 
         private static MainWindow _main;
-        private static GameWindow game;
+        private static GameWindow _game;
 
         public static void SetMainWindow( MainWindow main ) {
             _main = main;
         }
 
+        public static void SetGameWindow( GameWindow game ) {
+            _game = game;
+        }
+
         public static void ReadMessages() {
             while(true) {
                 string message = Player.ReadLine();
-                if(message.Length == 0) {
+                if(message == null || message.Length == 0) {
                     break;
                 }
 
@@ -32,12 +38,19 @@ namespace Client {
                         Player.Name = message;
                         DebugManager.Game( "Connected as " + Player.Name );
                         Player.Connected = true;
-                        _main.Dispatcher.Invoke( (Action)(() => { game = new GameWindow(); }) );
-                        _main.Dispatcher.Invoke( (Action)(() => { _main.Close(); }) );
+                        _main.Dispatcher.Invoke( (Action)(() => { new GameWindow(); _main.Close(); }) );
                         break;
                     case "NickNameInUse:":
-                        _main.Dispatcher.Invoke( (Action)(() => { _main.SetError( "Nickname already in use" ); }) );
+                        _main.SetError( "Nickname already in use" );
                         DebugManager.GameWarn( "Nickname already in use" );
+                        break;
+                    case "PortalAccepted:":
+                        Tuple<int,int> points = Portal.GetPointsFromMessage(message);
+                        _game.PortalAccepted( points.Item1, points.Item2 );
+                        _game.CanvasChanged();
+                        break;
+                    case "PortalDenied:":
+                        DebugManager.GameWarn( message );
                         break;
                 }
             }
