@@ -78,8 +78,6 @@ namespace Client {
         }
 
         public static Rectangle GetPortalByInsidePoint(Point point) {
-            Rectangle portal = CreatePortal( point );
-            
             foreach(Rectangle rect in _gameCanvas.Children.OfType<Rectangle>()) {
                 if(rect.Stroke != Brushes.Purple) {
                     continue;

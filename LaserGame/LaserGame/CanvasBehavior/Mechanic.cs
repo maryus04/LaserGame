@@ -22,7 +22,7 @@ namespace Client.CanvasBehavior {
             GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) );
         }
 
-        public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) {
+        public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) { // TODO : TEST UNIT 
             double A1 = lp2.Y - lp1.Y;
             double B1 = lp1.X - lp2.X;
             double C1 = A1 * lp1.X + B1 * lp1.Y;
