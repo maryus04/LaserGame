@@ -13,13 +13,12 @@ using Client.CanvasBehavior;
 namespace Client.LaserComponents {
     class Laser {
 
-        private static ObservableCollection<Line> _laserLines;
-        private static Canvas _gameCanvas;
+        private static Laser instance;
 
-        public Laser( Canvas gameCanvas ,Canvas debugCanvas) {
-            LaserBehavior.DebugCanvas = debugCanvas;
-            LaserBehavior.GameCanvas = gameCanvas;
-            _gameCanvas = gameCanvas;
+        private ObservableCollection<Line> _laserLines;
+
+        public Laser( Canvas gameCanvas, Canvas debugCanvas ) {
+            instance = this;
             _laserLines = new ObservableCollection<Line>(); // TODO: use this to autoupdate the laser after a intersection occured
             _laserLines.CollectionChanged += ListChanged;
         }
@@ -44,15 +43,15 @@ namespace Client.LaserComponents {
             myLine.StrokeThickness = 1;
 
             _laserLines.Add( myLine );
-            _gameCanvas.Children.Add( myLine );
+            GameWindow.getInstance().gameCanvas.Children.Add( myLine );
         }
 
         private void ListChanged( object sender, EventArgs e ) {
             LaserBehavior.IntersectionLineAllCanvasRects( GetLastLine() );
         }
 
-        
-
-
+        public static Laser getInstance() {
+            return instance;
+        }
     }
 }

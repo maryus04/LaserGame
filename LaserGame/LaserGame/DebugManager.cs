@@ -62,27 +62,27 @@ namespace Client {
             Console.ResetColor();
         }
 
-        public static void GameWarn( string message) {
+        public static void GameWarn( string message ) {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine( Prefix( "(Warn)(Game)" ) + message );
             Console.ResetColor();
         }
 
-        public static void GameError( string message) {
+        public static void GameError( string message ) {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine( Prefix( "(Error)(Game)" ) + message );
             Console.ResetColor();
         }
 
-        public static void DebugGame( string message) {
+        public static void DebugGame( string message ) {
             if(!_debugMode) return;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine( Prefix( "(Debug)(Game)" ) + message );
             Console.ResetColor();
         }
 
-        private static string Prefix(string prefix) {
-            String temp=prefix;
+        private static string Prefix( string prefix ) {
+            String temp = prefix;
             for(int i = temp.Length; i < PREFIX_LENGTH; i++) {
                 temp = temp + " ";
             }
@@ -101,7 +101,7 @@ namespace Client {
             get { return _pointsToBeDrawn; }
         }
 
-        public static void DebugLaser( Canvas debugCanvas) {
+        public static void DebugLaser( Canvas debugCanvas ) {
             if(!_debugMode) return;
             DeletePointsFromCanvas( debugCanvas );
             foreach(Point intersection in _pointsToBeDrawn) {

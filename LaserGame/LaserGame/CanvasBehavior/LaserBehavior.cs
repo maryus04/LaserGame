@@ -10,29 +10,8 @@ using System.Collections.ObjectModel;
 namespace Client.CanvasBehavior {
     static class LaserBehavior {
 
-        private static Canvas _gameCanvas;
-        private static Canvas _debugCanvas;
-
-        public static Canvas GameCanvas {
-            set {
-                _gameCanvas = value;
-            }
-            get {
-                return _gameCanvas;
-            }
-        }
-
-        public static Canvas DebugCanvas {
-            set {
-                _debugCanvas = value;
-            }
-            get {
-                return _debugCanvas;
-            }
-        }
-
         public static void LaserIntersectionAllCanvasRects( List<Line> laser ) {
-            var child = _gameCanvas.Children;
+            var child = GameWindow.getInstance().gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
 
             foreach(Line currentLine in laser) {
@@ -40,17 +19,17 @@ namespace Client.CanvasBehavior {
                     Mechanic.GetIntersectionPointLineRect( currentLine, rect );
                 }
             }
-            DebugManager.DebugLaser( _debugCanvas );
+            DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
         }
 
         public static void IntersectionLineAllCanvasRects( Line lastLine ) {
-            var child = _gameCanvas.Children;
+            var child = GameWindow.getInstance().gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
 
             foreach(Rectangle rect in rectlist) {
                 Mechanic.GetIntersectionPointLineRect( lastLine, rect );
             }
-            DebugManager.DebugLaser( _debugCanvas );
+            DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
         }
 
     }

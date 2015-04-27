@@ -9,17 +9,25 @@ using System.Net.Sockets;
 using System.IO;
 
 namespace Client {
-    public static class Player {
+    public class Player {
 
-        public static string Name { get; set; }
+        private static Player instance;
 
-        public static TcpClient TcpClient { get; set; }
-        public static bool Connected { get; set; }
+        public string Name { get; set; }
 
-        public static StreamWriter Writer { get; set; }
-        public static StreamReader Reader { get; set; }
+        public bool FirstClick { get; set; }
+
+        public TcpClient TcpClient { get; set; }
+        public bool Connected { get; set; }
+
+        public StreamWriter Writer { get; set; }
+        public StreamReader Reader { get; set; }
+
+        public Player(){
+            instance = this;
+        }
         
-        public static void WriteLine( string message ) {
+        public void WriteLine( string message ) {
             try {
                 Writer.WriteLine( message );
                 Writer.Flush();
@@ -32,7 +40,7 @@ namespace Client {
             }
         }
 
-        public static string ReadLine() {
+        public string ReadLine() {
             try {
                 return Reader.ReadLine();
             } catch(Exception) {
@@ -45,7 +53,7 @@ namespace Client {
             return "";
         }
 
-        public static void CloseConnection() {
+        public void CloseConnection() {
             if(TcpClient != null && TcpClient.Connected) {
                 Connected = false;
                 WriteLine( "CloseConnection:" );
@@ -55,9 +63,16 @@ namespace Client {
             }
         }
 
-        public static void InitializeStream() {
+        public void InitializeStream() {
             Writer = new StreamWriter( TcpClient.GetStream() );
             Reader = new StreamReader( TcpClient.GetStream() );
+        }
+
+        public static Player getInstance() {
+            if(instance == null) {
+                instance = new Player();
+            }
+            return instance;
         }
 
     }

@@ -17,13 +17,15 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Client.MessageControl;
 
 namespace Client {
     public partial class MainWindow : Window {
 
-        
+        private static MainWindow instance;
 
         public MainWindow() {
+            instance = this;
             DebugManager.EnableConsole();
             InitializeComponent();
         }
@@ -38,10 +40,10 @@ namespace Client {
         }
 
         private bool InitConnection() {
-            if(Player.TcpClient != null) return false;
+            if(Player.getInstance().TcpClient != null) return false;
             if(!InitializeConnection()) return false;
 
-            Player.InitializeStream();
+            Player.getInstance().InitializeStream();
 
             ReadMessages();
 
@@ -50,8 +52,8 @@ namespace Client {
 
         private bool InitializeConnection() {
             try {
-                Player.TcpClient = new TcpClient();
-                Player.TcpClient.Connect( IpAddTB.Text, 4296 );
+                Player.getInstance().TcpClient = new TcpClient();
+                Player.getInstance().TcpClient.Connect( IpAddTB.Text, 4296 );
             } catch {
                 this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = "Server not found."; }) );
                 DebugManager.GameError( "Server not found." );
@@ -63,7 +65,6 @@ namespace Client {
         private void ReadMessages() {
             Thread ReadIncomming = new Thread( () => MessageReader.ReadMessages() );
             
-            MessageReader.SetMainWindow( this );
             ReadIncomming.SetApartmentState( ApartmentState.STA );
             ReadIncomming.Name = "ReadMessages";
 
@@ -71,7 +72,7 @@ namespace Client {
         }
 
         private void SendNickName() {
-            Player.WriteLine( "MyName:" + PlayerNameTB.Text );
+            Player.getInstance().WriteLine( "MyName:" + PlayerNameTB.Text );
         }
 
         public void SetError(string error) {
@@ -83,13 +84,20 @@ namespace Client {
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
-            if(!GameWindow.isGameStarted) {
-                Player.CloseConnection();
+            if(!GameWindow.IsGameStarted) {
+                Player.getInstance().CloseConnection();
             }
         }
 
         private void Window_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {
             ErrorLabel.Content = "";
+        }
+
+        public static MainWindow getInstance() {
+            if(instance == null) {
+                instance = new MainWindow();
+            }
+            return instance;
         }
 
     }
