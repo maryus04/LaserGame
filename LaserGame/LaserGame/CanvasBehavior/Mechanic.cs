@@ -48,9 +48,9 @@ namespace Client.CanvasBehavior {
             return intersection;
         }
 
-        private static bool IsOnLine( Point pt1, Point pt2, Point pt ) {
-            return ((pt.X >= pt1.X && pt.X <= pt2.X) && (pt.Y >= pt1.Y && pt.Y <= pt2.Y)) ||
-                ((pt.X <= pt1.X && pt.X >= pt2.X) && (pt.Y <= pt1.Y && pt.Y >= pt2.Y));
+        public static bool IsOnLine( Point lp1, Point lp2, Point pt ) {
+            return ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
+                ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y));
         }
 
     }

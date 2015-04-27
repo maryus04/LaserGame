@@ -30,6 +30,8 @@ namespace Client {
 
                 DebugManager.DebugGame( "Server sent:" + message );
 
+                Point coords;
+
                 string method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
                 message = message.Replace( method, "" );
 
@@ -38,19 +40,29 @@ namespace Client {
                         Player.Name = message;
                         DebugManager.Game( "Connected as " + Player.Name );
                         Player.Connected = true;
-                        _main.Dispatcher.Invoke( (Action)(() => { new GameWindow(); _main.Close(); }) );
+                        _main.StartGame();
                         break;
                     case "NickNameInUse:":
                         _main.SetError( "Nickname already in use" );
                         DebugManager.GameWarn( "Nickname already in use" );
                         break;
                     case "PortalAccepted:":
-                        Tuple<int,int> points = Portal.GetPointsFromMessage(message);
-                        _game.PortalAccepted( points.Item1, points.Item2 );
+                        coords = Portal.GetPointsFromMessage(message);
+                        _game.PortalAccepted( coords );
                         _game.CanvasChanged();
                         break;
                     case "PortalDenied:":
                         DebugManager.GameWarn( message );
+                        break;
+                    case "PortalSpawned:":
+                        coords = Portal.GetPointsFromMessage( message );
+                        _game.PortalSpawnedByOtherPlayer( coords );
+                        _game.CanvasChanged();
+                        break;
+                    case "PortalRemoved:":
+                        coords = Portal.GetPointsFromMessage( message );
+                        _game.PortalRemovedByOtherPlayer( coords );
+                        _game.CanvasChanged();
                         break;
                 }
             }

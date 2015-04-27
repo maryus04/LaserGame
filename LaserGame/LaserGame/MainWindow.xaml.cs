@@ -34,7 +34,7 @@ namespace Client {
         }
 
         public void StartGame() {
-            this.Dispatcher.Invoke( (Action)(() => { this.Close(); new GameWindow(); }) );
+            this.Dispatcher.Invoke( (Action)(() => { new GameWindow(); this.Close(); }) );
         }
 
         private bool InitConnection() {

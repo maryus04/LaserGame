@@ -22,7 +22,7 @@ namespace Client {
         }
 
         public static void AddPlayerPortal( Rectangle rect ) {
-            RemovePortal( GetCurrentPortal() );
+            RemovePortalByRectangle( GetCurrentPortal() );
             SetCurrentPortal( rect );
             DrawPortal( rect );
         }
@@ -31,8 +31,8 @@ namespace Client {
             _gameCanvas.Children.Add( rect );
         }
 
-        public static void RemovePortal( Rectangle rect ) {
-            _gameCanvas.Children.Remove( GetCurrentPortal() );
+        public static void RemovePortalByRectangle( Rectangle rect ) {
+            _gameCanvas.Children.Remove( rect );
         }
 
         public static Rectangle CreatePortal( Point point ) {
@@ -68,13 +68,31 @@ namespace Client {
             }
         }
 
-        public static Tuple<int, int> GetPointsFromMessage( string message ) {
+        public static Point GetPointsFromMessage( string message ) {
             message = message.Substring( message.IndexOf( "COORD:" ) + 6, (message.IndexOf( "ENDCOORD" )) - (message.IndexOf( "COORD:" ) + 6) );
             string x = message.Substring( 0, (message.IndexOf( "," )) );
             message = message.Replace( x + ",", "" );
             string y = message.Substring( 0, message.Length );
 
-            return Tuple.Create( Int32.Parse( x ), Int32.Parse( y ) );
+            return new Point( Int32.Parse( x ), Int32.Parse( y ) );
+        }
+
+        public static Rectangle GetPortalByInsidePoint(Point point) {
+            Rectangle portal = CreatePortal( point );
+            
+            foreach(Rectangle rect in _gameCanvas.Children.OfType<Rectangle>()) {
+                if(rect.Stroke != Brushes.Purple) {
+                    continue;
+                }
+                double rectX = Canvas.GetLeft( rect );
+                double rectY = Canvas.GetTop( rect );
+
+                if(point.X >= rectX && point.X <= rectX + rect.Width &&
+                    point.Y >= rectY && point.Y <= rectY + rect.Height) {
+                        return rect;
+                }
+            }
+            return null;
         }
 
     }

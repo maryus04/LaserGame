@@ -61,6 +61,7 @@ namespace Server {
             if(!PortalHandler.IsPortalIntersectingPortal( portal )) {
                 PortalHandler.SetCurrentPortal( client, portal );
                 client.WriteLine( "PortalAccepted:COORD:" + points.Item1 + "," + points.Item2 + "ENDCOORD" );
+                PortalHandler.SendPortalExcept( client, new Point(points.Item1 , points.Item2) );
                 ConsoleManager.Communication( client.NickName + " created a portal at " + points.Item1 + "," + points.Item2 );
             } else {
                 client.WriteLine( "PortalDenied:" + points.Item1 + "," + points.Item2 + " intersecting another portal." );

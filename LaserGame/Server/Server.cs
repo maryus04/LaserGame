@@ -49,6 +49,15 @@ namespace Server {
             }
         }
 
+        public static void SendServerMessageExcept( ServerClient sendingClient, string message) {
+            foreach(ServerClient client in _nickName.Values) {
+                if(client == sendingClient) {
+                    continue;
+                }
+                client.WriteLine( message );
+            }
+        }
+
         private void newCommunication(TcpClient connection){
             new Communication( connection );
         }

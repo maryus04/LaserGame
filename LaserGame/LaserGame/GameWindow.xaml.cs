@@ -45,8 +45,8 @@ namespace Client {
             this.Dispatcher.Invoke( (Action)(() => { LaserBehavior.LaserIntersectionAllCanvasRects( _laser.GetAllLines() ); }) );
         }
 
-        public void PortalAccepted(int x,int y) {
-            this.Dispatcher.Invoke( (Action)(() => { Portal.AddPlayerPortal( Portal.CreatePortal( new Point( x, y ) ) ); }) );
+        public void PortalAccepted(Point center) {
+            this.Dispatcher.Invoke( (Action)(() => { Portal.AddPlayerPortal( Portal.CreatePortal( center ) ); }) );
         }
 
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
@@ -61,6 +61,14 @@ namespace Client {
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
             Player.CloseConnection();
+        }
+
+        public void PortalSpawnedByOtherPlayer(Point point) {
+            this.Dispatcher.Invoke( (Action)(() => { Portal.DrawPortal(Portal.CreatePortal(point)); }) );
+        }
+
+        internal void PortalRemovedByOtherPlayer( Point coords ) {
+            this.Dispatcher.Invoke( (Action)(() => { Portal.RemovePortalByRectangle( Portal.GetPortalByInsidePoint( coords ) ); }) );
         }
     }
 }
