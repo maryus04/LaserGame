@@ -61,7 +61,7 @@ namespace Client.CanvasBehavior {
             }
         }
 
-        public static Rectangle GetPortalByInsidePoint( Point point ) { // TODO: TRY USIG A HASHTABLE / HASHMAP KEY: CENTRAL POINT 
+        public static Rectangle GetPortalByInsidePoint( Point point ) {
             return (Rectangle)Portals.getInstance().OtherPortals[point];
         }
 
