@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 using System.Windows;
 
 namespace Client.CanvasBehavior {
-    class Mechanic {
+    public class Mechanic {
 
         public static void GetIntersectionPointLineRect( Line line, Rectangle rect ) {
             double rectX = Canvas.GetLeft( rect );
@@ -50,6 +50,8 @@ namespace Client.CanvasBehavior {
 
         public static bool IsOnLine( Point lp1, Point lp2, Point pt ) {
             return ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
+                ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y)) ||
+                ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
                 ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y));
         }
 
