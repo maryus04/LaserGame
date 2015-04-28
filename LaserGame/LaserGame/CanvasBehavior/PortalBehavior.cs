@@ -11,67 +11,58 @@ using Client.CanvasComponents;
 namespace Client.CanvasBehavior {
     class PortalBehavior {
 
-        public static void AddPlayerPortal( Rectangle rect ) {
-            RemovePortalByRectangle( GetMyCurrentPortal() );
-            SetMyCurrentPortal( rect );
-            DrawPortal( rect );
+        public static void AddPlayerPortal( Point centerPoint ) {
+            RemovePortalByRectangle( GetMyCurrentPortalCenterPoint() );
+            SetMyCurrentPortal( centerPoint );
+            DrawPortal( centerPoint );
         }
 
-        public static void DrawPortal( Rectangle rect ) {
-            GameWindow.getInstance().gameCanvas.Children.Add( rect );
+        public static void DrawPortal( Point centerPoint ) {
+            Rectangle portal = CreatePortal( centerPoint );
+            Portals.getInstance().OtherPortals.Add( centerPoint, portal );
+            GameWindow.getInstance().gameCanvas.Children.Add( portal );
         }
 
-        public static void RemovePortalByRectangle( Rectangle rect ) {
-            GameWindow.getInstance().gameCanvas.Children.Remove( rect );
+        public static void RemovePortalByRectangle( Point centerPoint ) {
+            GameWindow.getInstance().gameCanvas.Children.Remove( GetPortalByInsidePoint( centerPoint ) );
+            Portals.getInstance().OtherPortals.Remove( centerPoint );
         }
 
-        public static Rectangle CreatePortal( Point point ) {
+        public static Rectangle CreatePortal( Point centerPoint ) {
             Rectangle rect = new Rectangle {
                 Width = 10,
                 Height = 10,
                 Stroke = Brushes.Purple,
                 StrokeThickness = 10
             };
-            Canvas.SetLeft( rect, point.X - 5 );
-            Canvas.SetTop( rect, point.Y - 5 );
+            Canvas.SetLeft( rect, centerPoint.X - 5 );
+            Canvas.SetTop( rect, centerPoint.Y - 5 );
 
             return rect;
         }
 
-        public static void SetMyCurrentPortal( Rectangle rect ) {
+        public static void SetMyCurrentPortal( Point centerPoint ) {
             if(Player.getInstance().FirstClick) {
-                Portals.getInstance().FirstPortal = rect;
+                Portals.getInstance().FirstPortal = CreatePortal( centerPoint );
                 Player.getInstance().FirstClick = false;
             } else {
-                Portals.getInstance().SecondPortal = rect;
+                Portals.getInstance().SecondPortal = CreatePortal( centerPoint );
                 Player.getInstance().FirstClick = true;
             }
         }
 
-        public static Rectangle GetMyCurrentPortal() {
+        public static Point GetMyCurrentPortalCenterPoint() { // TODO: TRY TO MAKE IT BETTER
             if(Player.getInstance().FirstClick && Portals.getInstance().FirstPortal != null && Portals.getInstance().SecondPortal != null) {
-                return Portals.getInstance().FirstPortal;
+                return new Point(Canvas.GetLeft( Portals.getInstance().FirstPortal )+5 , Canvas.GetTop( Portals.getInstance().FirstPortal )+5);
             } else if(!Player.getInstance().FirstClick && Portals.getInstance().FirstPortal != null && Portals.getInstance().SecondPortal != null) {
-                return Portals.getInstance().SecondPortal;
+                return new Point( Canvas.GetLeft( Portals.getInstance().SecondPortal ) + 5, Canvas.GetTop( Portals.getInstance().SecondPortal ) + 5 ); ;
             } else {
-                return null;
+                return new Point(-1,-1);
             }
         }
 
         public static Rectangle GetPortalByInsidePoint( Point point ) { // TODO: TRY USIG A HASHTABLE / HASHMAP KEY: CENTRAL POINT 
-            foreach(Rectangle rect in GameWindow.getInstance().gameCanvas.Children.OfType<Rectangle>()) {
-                if(rect.Stroke != Brushes.Purple) {
-                    continue;
-                }
-                double rectX = Canvas.GetLeft( rect );
-                double rectY = Canvas.GetTop( rect );
-
-                if(point.X >= rectX && point.X <= rectX + rect.Width &&
-                    point.Y >= rectY && point.Y <= rectY + rect.Height) {
-                    return rect;
-                }
-            }
-            return null;
+            return (Rectangle)Portals.getInstance().OtherPortals[point];
         }
 
     }

@@ -10,7 +10,7 @@ using System.Drawing;
 namespace Server {
     public class ServerClient {
         private string nickName = "NotYetSet";
-        
+
         public TcpClient TcpClient { get; set; }
 
         public StreamReader Reader { get; set; }
@@ -23,8 +23,8 @@ namespace Server {
 
         public string NickName {
             get { return nickName; }
-            set { nickName = value; } 
-        } 
+            set { nickName = value; }
+        }
 
         public bool isConnected;
 
@@ -42,7 +42,14 @@ namespace Server {
         }
 
         public String ReadLine() {
-            return Reader.ReadLine();
+            try {
+                return Reader.ReadLine();
+            } catch(Exception) {
+                Reader.Close();
+                Writer.Close();
+                TcpClient.Close();
+            }
+            return "";
         }
 
         public void Flush() {
@@ -56,7 +63,7 @@ namespace Server {
             TcpClient.Close();
         }
 
-        public int GetPort(){
+        public int GetPort() {
             return ((IPEndPoint)TcpClient.Client.RemoteEndPoint).Port;
         }
 

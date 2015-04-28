@@ -13,6 +13,8 @@ namespace Client.CanvasComponents {
         public Rectangle FirstPortal { get; set; }
         public Rectangle SecondPortal { get; set; }
 
+        public Hashtable OtherPortals = new Hashtable( 100 );
+
         public Portals() {
             instance = this;
         }

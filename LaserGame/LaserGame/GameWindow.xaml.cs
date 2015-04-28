@@ -48,8 +48,8 @@ namespace Client {
             this.Dispatcher.Invoke( (Action)(() => { LaserBehavior.LaserIntersectionAllCanvasRects( Laser.getInstance().GetAllLines() ); }) );
         }
 
-        public void PortalAccepted( Point center ) {
-            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( PortalBehavior.CreatePortal( center ) ); }) );
+        public void PortalAccepted( Point centerPoint ) {
+            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( centerPoint ); }) );
         }
 
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
@@ -66,12 +66,12 @@ namespace Client {
             Player.getInstance().CloseConnection();
         }
 
-        public void PortalSpawnedByOtherPlayer( Point point ) {
-            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.DrawPortal( PortalBehavior.CreatePortal( point ) ); }) );
+        public void PortalSpawnedByOtherPlayer( Point centerPoint ) {
+            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.DrawPortal( centerPoint ); }) );
         }
 
-        public void PortalRemovedByOtherPlayer( Point coords ) {
-            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.RemovePortalByRectangle( PortalBehavior.GetPortalByInsidePoint( coords ) ); }) );
+        public void PortalRemovedByOtherPlayer( Point centerPoint ) {
+            this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.RemovePortalByRectangle( centerPoint ); }) );
         }
 
         public static GameWindow getInstance() {

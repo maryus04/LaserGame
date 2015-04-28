@@ -52,6 +52,7 @@
     <Compile Include="ConsoleManager.cs" />
     <Compile Include="Handlers\PortalHandler.cs" />
     <Compile Include="Map\MapParser.cs" />
+    <Compile Include="MessageControl\MessageParser.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
