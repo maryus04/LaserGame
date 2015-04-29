@@ -56,10 +56,10 @@ namespace ClientTest {
             Point lp2 = new Point( 1130.8351994198, 459.4418393593 );
             Point rp1 = new Point( 93.8809675263, 466.6070460782 );
             Point rp2 = new Point( 1131.5285091118, 22.3629395537 );
-            Point expected = new Point( 617.491142085183, 242.43580792480 );
+            Point expected = new Point( 617.491142085183, 242.435807924804 );
             Point actual;
             actual = Mechanic.GetIntersectionPointTwoLines( lp1, lp2, rp1, rp2 );
-            Assert.AreEqual( expected, actual );
+            Assert.AreEqual( ("" + expected.X + expected.Y), ("" + actual.X + actual.Y) );
         }
 
         /// <summary>
