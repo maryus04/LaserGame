@@ -61,19 +61,5 @@ namespace ClientTest {
             actual = Mechanic.GetIntersectionPointTwoLines( lp1, lp2, rp1, rp2 );
             Assert.AreEqual( ("" + expected.X + expected.Y), ("" + actual.X + actual.Y) );
         }
-
-        /// <summary>
-        ///A test for IsOnLine
-        ///</summary>
-        [TestMethod()]
-        public void IsOnLineTest() {
-            Point lp1 = new Point(); // TODO: Initialize to an appropriate value
-            Point lp2 = new Point(); // TODO: Initialize to an appropriate value
-            Point pt = new Point(); // TODO: Initialize to an appropriate value
-            bool expected = false; // TODO: Initialize to an appropriate value
-            bool actual;
-            actual = Mechanic.IsOnLine( lp1, lp2, pt );
-            //Assert.AreEqual( expected, actual );
-        }
     }
 }
