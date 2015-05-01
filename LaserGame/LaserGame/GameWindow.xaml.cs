@@ -12,7 +12,6 @@ using System.Windows.Shapes;
 using Client.LaserComponents;
 using Client.CanvasBehavior;
 using System.Threading;
-using Client.CanvasComponents;
 
 namespace Client {
     public partial class GameWindow : Window {
@@ -38,9 +37,12 @@ namespace Client {
 
             BuildMap();
 
-            Laser.getInstance().buildFirstLine();
+            Laser.getInstance().buildLaserLine(new Point(0,0) , new Point(300,300));
+
+            Laser.getInstance().buildLaserLine( new Point( 0, 100 ), new Point( 800, 100 ) );
 
             this.Show();
+            CanvasChanged();
         }
 
         public void CanvasChanged() {
@@ -52,9 +54,17 @@ namespace Client {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( centerPoint ); }) );
         }
 
+        public void AddToGameCanvas(UIElement block) {
+            gameCanvas.Children.Add( block );
+        }
+
+        public void RemoveFromGameCanvas( UIElement block ) {
+            gameCanvas.Children.Remove( block );
+        }
+
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
-            gameCanvas.Children.Add( Block.Create( 200, 300, 400, 0, Brushes.Green ) );
-            gameCanvas.Children.Add( Block.Create( 188, 127, 109, 126, Brushes.Green ) );
+            HardBlock.Add( "HardBlock", Block.Create( 200, 300, 400, 0, Brushes.Green ) );
+            HardBlock.Add( "HardBlock", Block.Create( 188, 127, 109, 126, Brushes.Green ) );
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {

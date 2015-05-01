@@ -31,18 +31,27 @@ namespace Client.LaserComponents {
             return _laserLines.ToList();
         }
 
-        public void buildFirstLine() {
+        public void buildLaserLine(Point p1,Point p2) {
             Line myLine = new Line();
             myLine.Stroke = System.Windows.Media.Brushes.Red;
-            myLine.X1 = 0;
-            myLine.Y1 = 150;
+            myLine.X1 = p1.X;
+            myLine.Y1 = p1.Y;
 
-            myLine.X2 = 500;
-            myLine.Y2 = 150;
+            myLine.X2 = p1.X;
+            myLine.Y2 = p1.Y;
 
             myLine.StrokeThickness = 1;
 
             _laserLines.Add( myLine );
+            Point temp;
+            while((temp = LaserBehavior.IntersectionLineAllCanvasRects( myLine )) == new Point( -1, -1 )) {
+                if(myLine.X2 <= p2.X) {
+                    myLine.X2 += 3;
+                }
+                if(myLine.Y2 <= p2.Y) {
+                    myLine.Y2 += 3;
+                }
+            }
             GameWindow.getInstance().gameCanvas.Children.Add( myLine );
         }
 

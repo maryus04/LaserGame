@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Shapes;
 using System.Collections;
 
-namespace Client.CanvasComponents {
+namespace Client.CanvasBehavior {
     class Portals {
 
         private static Portals instance;
@@ -13,7 +13,7 @@ namespace Client.CanvasComponents {
         public Rectangle FirstPortal { get; set; }
         public Rectangle SecondPortal { get; set; }
 
-        public Hashtable OtherPortals = new Hashtable( 100 );
+        public Hashtable OtherPortals = new Hashtable();
 
         public Portals() {
             instance = this;

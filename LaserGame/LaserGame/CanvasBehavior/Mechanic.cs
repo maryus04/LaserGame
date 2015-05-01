@@ -9,20 +9,26 @@ using System.Windows;
 namespace Client.CanvasBehavior {
     public class Mechanic {
 
-        public static void GetIntersectionPointLineRect( Line line, Rectangle rect ) {
+        public static Point GetIntersectionPointLineRect( Line line, Rectangle rect ) {
             double rectX = Canvas.GetLeft( rect );
             double rectY = Canvas.GetTop( rect );
 
             Point firstLinePoint = new Point( line.X1, line.Y1 );
             Point secondLinePoint = new Point( line.X2, line.Y2 );
+            Point temp;
+            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.Width, rectY ) )) != new Point( -1, -1 ))
+                return temp;
+            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY ), new Point( rectX + rect.Width, rectY + rect.Height ) ))!= new Point( -1, -1 ))
+                return temp;
+            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY + rect.Height ), new Point( rectX, rectY + rect.Height ) ))!= new Point( -1, -1 ))
+                return temp;
+            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) )) != new Point( -1, -1 ))
+                return temp;
 
-            GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.Width, rectY ) );
-            GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY ), new Point( rectX + rect.Width, rectY + rect.Height ) );
-            GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY + rect.Height ), new Point( rectX, rectY + rect.Height ) );
-            GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) );
+            return new Point(-1,-1);
         }
 
-        public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) { // TODO : TEST UNIT 
+        public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) {
             double A1 = lp2.Y - lp1.Y;
             double B1 = lp1.X - lp2.X;
             double C1 = A1 * lp1.X + B1 * lp1.Y;

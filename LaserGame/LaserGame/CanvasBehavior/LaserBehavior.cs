@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows;
 using System.Collections.ObjectModel;
+using Client.CanvasBehavior;
 
 namespace Client.CanvasBehavior {
     static class LaserBehavior {
@@ -22,14 +23,15 @@ namespace Client.CanvasBehavior {
             DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
         }
 
-        public static void IntersectionLineAllCanvasRects( Line lastLine ) {
-            var child = GameWindow.getInstance().gameCanvas.Children;
-            var rectlist = child.OfType<Rectangle>();
-
-            foreach(Rectangle rect in rectlist) {
-                Mechanic.GetIntersectionPointLineRect( lastLine, rect );
+        public static Point IntersectionLineAllCanvasRects( Line lastLine ) {
+            foreach(Block block in CanvasBlocks.list) {
+                Point temp;
+                if((temp = Mechanic.GetIntersectionPointLineRect( lastLine, block.BlockItem )) != new Point( -1, -1 )) {
+                    DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
+                    return temp;
+                }
             }
-            DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
+            return new Point( -1, -1 );
         }
 
     }
