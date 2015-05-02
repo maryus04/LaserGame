@@ -71,11 +71,11 @@ namespace Client {
         }
 
         public void AddToGameCanvas( UIElement block ) {
-            gameCanvas.Children.Add( block );
+            this.Dispatcher.Invoke( (Action)(() => { gameCanvas.Children.Add( block ); }) );
         }
 
         public void RemoveFromGameCanvas( UIElement block ) {
-            gameCanvas.Children.Remove( block );
+            this.Dispatcher.Invoke( (Action)(() => { gameCanvas.Children.Remove( block ); }) );
         }
 
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
