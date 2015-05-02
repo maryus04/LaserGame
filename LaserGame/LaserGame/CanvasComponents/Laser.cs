@@ -65,29 +65,16 @@ namespace Client.LaserComponents {
             myLine.X1 = p1.X;
             myLine.Y1 = p1.Y;
 
-            myLine.X2 = p1.X;
-            myLine.Y2 = p1.Y;
+            myLine.X2 = p2.X;
+            myLine.Y2 = p2.Y;
 
             myLine.StrokeThickness = 1;
 
             _laserLines.Add( myLine );
-            Point temp;
-            while((temp = LaserBehavior.IntersectionLineAllCanvasRects( myLine )) == new Point( -1, -1 )) {
-                if(p1.X <= p2.X) {
-                    if(myLine.X2 <= p2.X) {
-                        myLine.X2 += 3;
-                    }
-                    if(myLine.Y2 <= p2.Y) {
-                        myLine.Y2 += 3;
-                    }
-                } else {
-                    if(myLine.X2 >= p2.X) {
-                        myLine.X2 -= 3;
-                    }
-                    if(myLine.Y2 >= p2.Y) {
-                        myLine.Y2 -= 3;
-                    }
-                }
+            Point firstIntersectionPoint;
+            if((firstIntersectionPoint = LaserBehavior.GetInterLastLineAllBlocks( myLine )) != new Point( -1, -1 )) {
+                myLine.X2 = firstIntersectionPoint.X;
+                myLine.Y2 = firstIntersectionPoint.Y;
             }
             GameWindow.getInstance().gameCanvas.Children.Add( myLine );
         }

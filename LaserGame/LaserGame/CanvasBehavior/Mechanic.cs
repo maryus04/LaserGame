@@ -15,17 +15,25 @@ namespace Client.CanvasBehavior {
 
             Point firstLinePoint = new Point( line.X1, line.Y1 );
             Point secondLinePoint = new Point( line.X2, line.Y2 );
-            Point temp;
-            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.Width, rectY ) )) != new Point( -1, -1 ))
-                return temp;
-            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY ), new Point( rectX + rect.Width, rectY + rect.Height ) ))!= new Point( -1, -1 ))
-                return temp;
-            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY + rect.Height ), new Point( rectX, rectY + rect.Height ) ))!= new Point( -1, -1 ))
-                return temp;
-            if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) )) != new Point( -1, -1 ))
-                return temp;
+            List<Point> fourIntersectionPoints = new List<Point>();
 
-            return new Point(-1,-1);
+            fourIntersectionPoints.Add(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.Width, rectY ) ));
+            fourIntersectionPoints.Add(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY ), new Point( rectX + rect.Width, rectY + rect.Height ) ));
+            fourIntersectionPoints.Add(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY + rect.Height ), new Point( rectX, rectY + rect.Height ) ));
+            fourIntersectionPoints.Add(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) ));
+
+            return GetClosestPoint( firstLinePoint, fourIntersectionPoints );
+        }
+
+        public static Point GetClosestPoint( Point origin, List<Point> pointList ) {
+            var closestPoints = pointList.Where(point => point != origin && point != new Point(-1,-1))
+                                         .OrderBy( point => SmartDistanceCalcTwoPoints( origin, point ) )
+                                         .Take(1);
+            if(closestPoints.Count() > 0) {
+                return closestPoints.First();
+            } else {
+                return new Point( -1, -1 );
+            }
         }
 
         public static string GetLaserPath( Line line) {
@@ -79,6 +87,10 @@ namespace Client.CanvasBehavior {
                 ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y)) ||
                 ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
                 ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y));
+        }
+
+        private static double SmartDistanceCalcTwoPoints( Point source, Point target ) {
+            return Math.Pow( target.X - source.X, 2 ) + Math.Pow( target.Y - source.Y, 2 );
         }
 
     }
