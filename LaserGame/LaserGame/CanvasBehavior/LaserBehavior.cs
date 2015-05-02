@@ -23,11 +23,10 @@ namespace Client.CanvasBehavior {
             DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
         }
 
-        public static Point IntersectionLineAllCanvasRects( Line lastLine ) {
+        public static Point GetInterLastLineAllBlocks( Line lastLine ) {
             foreach(Block block in CanvasBlocks.list) {
                 Point temp;
                 if((temp = Mechanic.GetIntersectionPointLineRect( lastLine, block.BlockItem )) != new Point( -1, -1 )) {
-                    DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
                     return temp;
                 }
             }
