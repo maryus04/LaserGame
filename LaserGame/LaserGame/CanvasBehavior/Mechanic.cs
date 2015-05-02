@@ -28,6 +28,26 @@ namespace Client.CanvasBehavior {
             return new Point(-1,-1);
         }
 
+        public static string GetLaserPath( Line line) {
+            Point firstLinePoint = new Point( line.X1, line.Y1 );
+            Point secondLinePoint = new Point( line.X2, line.Y2 );
+            foreach(Block rect in CanvasBlocks.list){
+                double rectX = Canvas.GetLeft( rect.BlockItem );
+                double rectY = Canvas.GetTop( rect.BlockItem );
+
+                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.BlockItem.Width, rectY ) ) != new Point( -1, -1 ))
+                    return "UP";
+                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY ), new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ) ) != new Point( -1, -1 ))
+                    return "RIGHT";
+                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ), new Point( rectX, rectY + rect.BlockItem.Height ) ) != new Point( -1, -1 ))
+                    return "DOWN";
+                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.BlockItem.Height ), new Point( rectX, rectY ) ) != new Point( -1, -1 ))
+                    return "LEFT";
+            }
+
+            return "NONE";
+        }
+
         public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) {
             double A1 = lp2.Y - lp1.Y;
             double B1 = lp1.X - lp2.X;

@@ -20,7 +20,7 @@ namespace Client {
 
         public static bool IsGameStarted {
             get {
-                if(instance == null){
+                if(instance == null) {
                     return false;
                 }
                 return true;
@@ -37,24 +37,40 @@ namespace Client {
 
             BuildMap();
 
-            Laser.getInstance().buildLaserLine(new Point(0,0) , new Point(300,300));
-
-            Laser.getInstance().buildLaserLine( new Point( 0, 100 ), new Point( 800, 100 ) );
+            Laser.getInstance().buildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
 
             this.Show();
-            CanvasChanged();
         }
 
         public void CanvasChanged() {
             DebugManager.DebugGame( "Canvas changed. Updating laser intersections" );
-            this.Dispatcher.Invoke( (Action)(() => { LaserBehavior.LaserIntersectionAllCanvasRects( Laser.getInstance().GetAllLines() ); }) );
+            Laser.getInstance().RemoveAll();
+            if(Portals.getInstance().FirstPortal == null || Portals.getInstance().SecondPortal == null) {
+                return;
+            }
+            string temp = "";
+            this.Dispatcher.Invoke( (Action)(() => {
+                temp = LaserBehavior.IntersectionLinePortals( Laser.getInstance().GetLastLine() );
+            }) );
+            switch(temp) {
+                case "first":
+                    this.Dispatcher.Invoke( (Action)(() => {
+                        Laser.getInstance().buildPortalLine( Portals.getInstance().SecondPortal );
+                    }) );
+                    break;
+                case "second":
+                    this.Dispatcher.Invoke( (Action)(() => {
+                        Laser.getInstance().buildPortalLine( Portals.getInstance().FirstPortal );
+                    }) );
+                    break;
+            }
         }
 
         public void PortalAccepted( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( centerPoint ); }) );
         }
 
-        public void AddToGameCanvas(UIElement block) {
+        public void AddToGameCanvas( UIElement block ) {
             gameCanvas.Children.Add( block );
         }
 
