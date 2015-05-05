@@ -47,7 +47,7 @@ namespace Client {
 
         public void CanvasChanged() {
             DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
-            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); ; }) );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
         }
 
         public void ConstructLaser() {
