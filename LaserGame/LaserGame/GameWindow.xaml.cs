@@ -36,34 +36,30 @@ namespace Client {
             new Portals();
 
             BuildMap();
-
-            Laser.getInstance().buildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
+            Laser.getInstance().BuildLaserLine( new Point( 0, 400 ), new Point( 500, 400 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 500, 500 ), new Point( 500, 0 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 200, 0 ), new Point( 200, 300 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 700, 300 ), new Point( 0, 300 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
 
             this.Show();
         }
 
         public void CanvasChanged() {
-            DebugManager.DebugGame( "Canvas changed. Updating laser intersections" );
-            Laser.getInstance().RemoveAll();
-            if(Portals.getInstance().FirstPortal == null || Portals.getInstance().SecondPortal == null) {
-                return;
+            DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); ; }) );
+        }
+
+        public void ConstructLaser() {
+            DebugManager.GameWarn( "Updating laser intersections." );
+            if(Laser.getInstance().BuildLaser()) {
+                this.Dispatcher.Invoke( (Action)(() => { Portals.getInstance().BuildLaserIfIntersect(); }) );
             }
-            string temp = "";
-            this.Dispatcher.Invoke( (Action)(() => {
-                temp = LaserBehavior.IntersectionLinePortals( Laser.getInstance().GetLastLine() );
-            }) );
-            switch(temp) {
-                case "first":
-                    this.Dispatcher.Invoke( (Action)(() => {
-                        Laser.getInstance().buildPortalLine( Portals.getInstance().SecondPortal );
-                    }) );
-                    break;
-                case "second":
-                    this.Dispatcher.Invoke( (Action)(() => {
-                        Laser.getInstance().buildPortalLine( Portals.getInstance().FirstPortal );
-                    }) );
-                    break;
-            }
+        }
+
+        public void DeleteMyLaser() {
+            DebugManager.GameWarn( "Canvas changed. Removing my laser." );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveMyLaser(); }) );
         }
 
         public void PortalAccepted( Point centerPoint ) {
@@ -94,10 +90,12 @@ namespace Client {
 
         public void PortalSpawnedByOtherPlayer( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.DrawPortal( centerPoint ); }) );
+            DebugManager.DebugGame( "Other player added portal from (" + centerPoint.X + "," + centerPoint.Y + ")" );
         }
 
         public void PortalRemovedByOtherPlayer( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.RemovePortalByRectangle( centerPoint ); }) );
+            DebugManager.DebugGame( "Removing other player portal from (" + centerPoint.X + "," + centerPoint.Y +")");
         }
 
         public static GameWindow getInstance() {

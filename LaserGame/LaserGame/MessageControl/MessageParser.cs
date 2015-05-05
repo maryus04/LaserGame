@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace Client.MessageControl {
     static class MessageParser {
@@ -15,11 +16,16 @@ namespace Client.MessageControl {
 
         public static Point GetPoint( string message ) {
             message = message.Substring( message.IndexOf( "COORD:" ) + 6, (message.IndexOf( "ENDCOORD" )) - (message.IndexOf( "COORD:" ) + 6) );
-            string x = message.Substring( 0, (message.IndexOf( "," )) );
-            message = message.Replace( x + ",", "" );
-            string y = message.Substring( 0, message.Length );
+            string[] points = message.Split( ',' );
 
-            return new Point( Int32.Parse( x ), Int32.Parse( y ) );
+            return new Point( Double.Parse( points[0] ), Double.Parse( points[1] ) );
+        }
+
+        public static Line GetLine( string message ) {
+            message = message.Substring( message.IndexOf( "COORD2:" ) + 7, (message.IndexOf( "ENDCOORD2" )) - (message.IndexOf( "COORD2:" ) + 7) );
+            string[] points = message.Split( ',' );
+
+            return new Line() { X1 = Double.Parse( points[0] ), Y1 = Double.Parse( points[1] ), X2 = Double.Parse( points[2] ), Y2 = Double.Parse( points[3] ) };
         }
 
     }

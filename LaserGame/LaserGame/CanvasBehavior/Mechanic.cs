@@ -36,24 +36,24 @@ namespace Client.CanvasBehavior {
             }
         }
 
-        public static string GetLaserPath( Line line) {
+        public static Tuple<string,Point> GetLaserPathAndBlockCollision( Line line) {
             Point firstLinePoint = new Point( line.X1, line.Y1 );
             Point secondLinePoint = new Point( line.X2, line.Y2 );
             foreach(Block rect in CanvasBlocks.list){
                 double rectX = Canvas.GetLeft( rect.BlockItem );
                 double rectY = Canvas.GetTop( rect.BlockItem );
-
-                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.BlockItem.Width, rectY ) ) != new Point( -1, -1 ))
-                    return "UP";
-                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY ), new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ) ) != new Point( -1, -1 ))
-                    return "RIGHT";
-                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ), new Point( rectX, rectY + rect.BlockItem.Height ) ) != new Point( -1, -1 ))
-                    return "DOWN";
-                if(GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.BlockItem.Height ), new Point( rectX, rectY ) ) != new Point( -1, -1 ))
-                    return "LEFT";
+                Point temp;
+                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.BlockItem.Width, rectY ) )) != new Point( -1, -1 ))
+                    return Tuple.Create("UP",temp);
+                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY ), new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ) )) != new Point( -1, -1 ))
+                    return Tuple.Create("RIGHT",temp);
+                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ), new Point( rectX, rectY + rect.BlockItem.Height ) )) != new Point( -1, -1 ))
+                    return Tuple.Create("DOWN",temp);
+                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.BlockItem.Height ), new Point( rectX, rectY ) )) != new Point( -1, -1 ))
+                    return Tuple.Create("LEFT",temp);
             }
 
-            return "NONE";
+            return Tuple.Create("NONE",new Point(-1,-1));
         }
 
         public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) {

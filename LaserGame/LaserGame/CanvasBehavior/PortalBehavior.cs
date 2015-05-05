@@ -18,6 +18,7 @@ namespace Client.CanvasBehavior {
         }
 
         public static void DrawPortal( Point centerPoint ) {
+            DebugManager.Game( "Added portal at (" + centerPoint.X + "," + centerPoint.Y + ")");
             Rectangle portal = CreatePortal( centerPoint );
             Portals.getInstance().OtherPortals.Add( centerPoint, portal );
             GameWindow.getInstance().gameCanvas.Children.Add( portal );

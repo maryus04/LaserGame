@@ -51,6 +51,12 @@ namespace Server {
                     case "PortalCreated:":
                         PortalCreated( _message );
                         break;
+                    case "LaserCreated:":
+                        LaserCreated( _message );
+                        break;
+                    case "LaserRemoved:":
+                        Server.SendServerMessageExcept( _client, "LaserRemoved:" + _message );
+                        break;
                 }
             }
         }
@@ -58,6 +64,13 @@ namespace Server {
         private static void SetMethodMessage( string message ) {
             _method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
             _message = message.Replace( _method, "" );
+        }
+
+        private void LaserCreated( string message ) {
+            Tuple<double, double, double, double> line = MessageParser.GetLine( message );
+            Server.SendServerMessageExcept( _client, "LaserCreated:" + "COORD2:" + line.Item1 + "," + line.Item2 + "," + line.Item3 + "," + line.Item4 + "ENDCOORD2" );
+
+            ConsoleManager.Communication( _client.NickName + " created a laser at (" + line.Item1 + "," + line.Item2 +") (" + line.Item3 + "," + line.Item4 + ")");
         }
 
         private void PortalCreated( string message ) {
