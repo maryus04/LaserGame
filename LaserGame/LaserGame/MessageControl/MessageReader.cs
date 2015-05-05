@@ -63,7 +63,6 @@ namespace Client.MessageControl {
                         GameWindow.getInstance().RemoveFromGameCanvas( Laser.getInstance().GetLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 ) );
                         Laser.getInstance().RemoveLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 );
                         break;
-                        GameWindow.getInstance().ConstructLaser();
                 }
             }
         }
