@@ -20,7 +20,7 @@ namespace Client {
 
         public static bool IsGameStarted {
             get {
-                if(instance == null){
+                if(instance == null) {
                     return false;
                 }
                 return true;
@@ -36,30 +36,42 @@ namespace Client {
             new Portals();
 
             BuildMap();
-
-            Laser.getInstance().buildLaserLine(new Point(0,0) , new Point(300,300));
-
-            Laser.getInstance().buildLaserLine( new Point( 0, 100 ), new Point( 800, 100 ) );
+            Laser.getInstance().BuildLaserLine( new Point( 0, 400 ), new Point( 500, 400 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 500, 500 ), new Point( 500, 0 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 200, 0 ), new Point( 200, 300 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 700, 300 ), new Point( 0, 300 ) ); //x
+            //Laser.getInstance().BuildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
 
             this.Show();
-            CanvasChanged();
         }
 
         public void CanvasChanged() {
-            DebugManager.DebugGame( "Canvas changed. Updating laser intersections" );
-            this.Dispatcher.Invoke( (Action)(() => { LaserBehavior.LaserIntersectionAllCanvasRects( Laser.getInstance().GetAllLines() ); }) );
+            DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); ; }) );
+        }
+
+        public void ConstructLaser() {
+            DebugManager.GameWarn( "Updating laser intersections." );
+            if(Laser.getInstance().BuildLaser()) {
+                this.Dispatcher.Invoke( (Action)(() => { Portals.getInstance().BuildLaserIfIntersect(); }) );
+            }
+        }
+
+        public void DeleteMyLaser() {
+            DebugManager.GameWarn( "Canvas changed. Removing my laser." );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveMyLaser(); }) );
         }
 
         public void PortalAccepted( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( centerPoint ); }) );
         }
 
-        public void AddToGameCanvas(UIElement block) {
-            gameCanvas.Children.Add( block );
+        public void AddToGameCanvas( UIElement block ) {
+            this.Dispatcher.Invoke( (Action)(() => { gameCanvas.Children.Add( block ); }) );
         }
 
         public void RemoveFromGameCanvas( UIElement block ) {
-            gameCanvas.Children.Remove( block );
+            this.Dispatcher.Invoke( (Action)(() => { gameCanvas.Children.Remove( block ); }) );
         }
 
         private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
@@ -78,10 +90,12 @@ namespace Client {
 
         public void PortalSpawnedByOtherPlayer( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.DrawPortal( centerPoint ); }) );
+            DebugManager.DebugGame( "Other player added portal from (" + centerPoint.X + "," + centerPoint.Y + ")" );
         }
 
         public void PortalRemovedByOtherPlayer( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.RemovePortalByRectangle( centerPoint ); }) );
+            DebugManager.DebugGame( "Removing other player portal from (" + centerPoint.X + "," + centerPoint.Y +")");
         }
 
         public static GameWindow getInstance() {

@@ -7,17 +7,18 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Client.CanvasBehavior;
+using Client.LaserComponents;
 
 namespace Client.CanvasBehavior {
     static class LaserBehavior {
 
-        public static void LaserIntersectionAllCanvasRects( List<Line> laser ) {
+        public static void GetAllIntersectionPointsForDebug( List<Line> laser ) { //TODO: this is not really nice ...find another way to debug laser
             var child = GameWindow.getInstance().gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
 
             foreach(Line currentLine in laser) {
-                foreach(Rectangle rect in rectlist) {
-                    Mechanic.GetIntersectionPointLineRect( currentLine, rect );
+                foreach(Block block in CanvasBlocks.list) {
+                    Mechanic.GetIntersectionPointLineRect( currentLine, block.BlockItem );
                 }
             }
             DebugManager.DebugLaser( GameWindow.getInstance().debugCanvas );
@@ -33,5 +34,66 @@ namespace Client.CanvasBehavior {
             return new Point( -1, -1 );
         }
 
+        public static string IntersectionLinePortals( Line lastLine ) {
+            if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().FirstPortal ) != new Point( -1, -1 )) {
+                return "first";
+            } else if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().SecondPortal ) != new Point( -1, -1 )) {
+                return "second";
+            } else
+                return "none";
+        }
+
+        public static void BuildPortalLine( Rectangle portalStart ) {
+            double x = Canvas.GetLeft( portalStart );
+            double y = Canvas.GetTop( portalStart );
+            Tuple<string, Point> result = Mechanic.GetLaserPathAndBlockCollision( new Line() { X1 = x, Y1 = y, X2 = x + 10, Y2 = y + 10 } );
+            Line lastLine = Laser.getInstance().GetLastLine();
+            switch(result.Item1) {
+                case "UP"://180
+                    if(lastLine.Y1 > lastLine.Y2) {//up
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 0 );
+                    } else if(lastLine.X1 < lastLine.X2) {//right
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 270 );
+                    } else if(lastLine.Y1 < lastLine.Y2) {// down
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 180 );
+                    } else if(lastLine.X1 > lastLine.X2) {//left
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 90 );
+                    }
+                    break;
+                case "DOWN"://0
+                    if(lastLine.Y1 > lastLine.Y2) {//up
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 180 );
+                    } else if(lastLine.X1 < lastLine.X2) {//right
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 90 );
+                    } else if(lastLine.Y1 < lastLine.Y2) {// down
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 0 );
+                    } else if(lastLine.X1 > lastLine.X2) {//left
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 270 );
+                    }
+                    break;
+                case "LEFT"://90
+                    if(lastLine.Y1 > lastLine.Y2) {//up
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 270 );
+                    } else if(lastLine.X1 < lastLine.X2) {//right
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 180 );
+                    } else if(lastLine.Y1 < lastLine.Y2) {// down
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 90 );
+                    } else if(lastLine.X1 > lastLine.X2) {//left
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 0 );
+                    }
+                    break;
+                case "RIGHT"://270
+                    if(lastLine.Y1 > lastLine.Y2) {//up
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 90 );
+                    } else if(lastLine.X1 < lastLine.X2) {//right
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 0 );
+                    } else if(lastLine.Y1 < lastLine.Y2) {// down
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 270 );
+                    } else if(lastLine.X1 > lastLine.X2) {//left
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item2, 180 );
+                    }
+                    break;
+            }
+        }
     }
 }

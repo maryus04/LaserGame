@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows;
 using System.Windows.Shapes;
+using Client.LaserComponents;
 
 namespace Client.MessageControl {
     class MessageReader {
@@ -14,13 +15,13 @@ namespace Client.MessageControl {
 
         public static void ReadMessages() {
             while(true) {
-                string message = Player.getInstance().ReadLine();
-                if(message == null || message.Length == 0) {
+                string entireMessage = Player.getInstance().ReadLine();
+                if(entireMessage == null || entireMessage.Length == 0) {
                     break;
                 }
-                DebugManager.DebugGame( "Server sent:" + message );
+                DebugManager.DebugGame( "Server sent:" + entireMessage );
 
-                SetMethodMessage( message );
+                SetMethodMessage( entireMessage );
 
                 switch(_method) {
                     case "ConnectionAccepted:":
@@ -34,20 +35,35 @@ namespace Client.MessageControl {
                         DebugManager.GameWarn( "Nickname already in use" );
                         break;
                     case "PortalAccepted:":
-                        GameWindow.getInstance().PortalAccepted( MessageParser.GetPoint( message ) );
-                        GameWindow.getInstance().CanvasChanged();
+                        GameWindow.getInstance().DeleteMyLaser();
+                        GameWindow.getInstance().PortalAccepted( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.getInstance().ConstructLaser();
                         break;
                     case "PortalDenied:":
                         DebugManager.GameWarn( _message );
                         break;
                     case "PortalSpawned:":
-                        GameWindow.getInstance().PortalSpawnedByOtherPlayer( MessageParser.GetPoint( message ) );
-                        GameWindow.getInstance().CanvasChanged();
+                        GameWindow.getInstance().PortalSpawnedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.getInstance().ConstructLaser();
                         break;
                     case "PortalRemoved:":
-                        GameWindow.getInstance().PortalRemovedByOtherPlayer( MessageParser.GetPoint( message ) );
                         GameWindow.getInstance().CanvasChanged();
+                        GameWindow.getInstance().PortalRemovedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.getInstance().ConstructLaser();
                         break;
+                    case "LaserCreated:":
+                        GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => {
+                            Line line = MessageParser.GetLine( entireMessage );
+                            Laser.getInstance().BuildLaserLine( new Point( line.X1, line.Y1 ), new Point( line.X2, line.Y2 ) );
+                        }) );
+                        GameWindow.getInstance().ConstructLaser();
+                        break;
+                    case "LaserRemoved:":
+                        Line laser = MessageParser.GetLine( _message );
+                        GameWindow.getInstance().RemoveFromGameCanvas( Laser.getInstance().GetLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 ) );
+                        Laser.getInstance().RemoveLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 );
+                        break;
+                        GameWindow.getInstance().ConstructLaser();
                 }
             }
         }

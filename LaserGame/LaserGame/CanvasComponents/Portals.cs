@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Shapes;
 using System.Collections;
+using Client.LaserComponents;
 
 namespace Client.CanvasBehavior {
     class Portals {
@@ -17,6 +18,22 @@ namespace Client.CanvasBehavior {
 
         public Portals() {
             instance = this;
+        }
+
+        public void BuildLaserIfIntersect() {
+            if(Portals.getInstance().FirstPortal == null || Portals.getInstance().SecondPortal == null) {
+                return;
+            }
+            string temp = "";
+            temp = LaserBehavior.IntersectionLinePortals( Laser.getInstance().GetLastLine() );
+            switch(temp) {
+                case "first":
+                    LaserBehavior.BuildPortalLine( Portals.getInstance().SecondPortal );
+                    break;
+                case "second":
+                    LaserBehavior.BuildPortalLine( Portals.getInstance().FirstPortal );
+                    break;
+            }
         }
 
         public static Portals getInstance() {
