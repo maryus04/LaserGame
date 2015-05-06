@@ -21,6 +21,8 @@ namespace Server {
         public Rectangle FirstPortal { get; set; }
         public Rectangle SecondPortal { get; set; }
 
+        public bool Ready { get; set; }
+
         public string NickName {
             get { return nickName; }
             set { nickName = value; }

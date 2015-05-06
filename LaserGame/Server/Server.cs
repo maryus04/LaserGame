@@ -33,7 +33,7 @@ namespace Server {
             //Player.height = MapParser.ParseMapDimensions().Item2;
 
             _nickName = new Hashtable( 100 );
-            _chatServer = new TcpListener( IPAddress.Parse( "127.0.0.1" ) , 4296 );
+            _chatServer = new TcpListener( IPAddress.Any, 4296 );
             _chatServer.Start();
             ConsoleManager.Server( "Server started on " + Environment.MachineName );
 
@@ -42,14 +42,14 @@ namespace Server {
                     TcpClient connection = _chatServer.AcceptTcpClient();
                     ConsoleManager.Server( "New client is pending..." );
 
-                    Thread startCommunication = new Thread(() => newCommunication(connection));
+                    Thread startCommunication = new Thread( () => newCommunication( connection ) );
                     startCommunication.Name = "StartConnetion";
                     startCommunication.Start();
                 }
             }
         }
 
-        public static void SendServerMessageExcept( ServerClient sendingClient, string message) {
+        public static void SendServerMessageExcept( ServerClient sendingClient, string message ) {
             foreach(ServerClient client in _nickName.Values) {
                 if(client == sendingClient) {
                     continue;
@@ -58,7 +58,42 @@ namespace Server {
             }
         }
 
-        private void newCommunication(TcpClient connection){
+        public static void SendServerToAll( ServerClient sendingClient, string message ) {
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( message + "NICK:" + sendingClient.NickName + "ENDNICK" );
+            }
+        }
+
+        public static void SendReady() {
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( "AllPlayersAreReady:" );
+            }
+        }
+        public static string GetPlayerNames() {
+            string names = "";
+            foreach(ServerClient client in _nickName.Values) {
+                names += client.NickName + ",";
+            }
+            names = names.Remove( names.Length - 1 );
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( "Players:" + names );
+            }
+            return names;
+        }
+
+        public static void PlayersAreReady() {
+            bool ready = true;
+            foreach(ServerClient client in _nickName.Values) {
+                if(client.Ready == false) {
+                    ready = false;
+                }
+            }
+            if(ready == true) {
+                SendReady();
+            }
+        }
+
+        private void newCommunication( TcpClient connection ) {
             new Communication( connection );
         }
     }

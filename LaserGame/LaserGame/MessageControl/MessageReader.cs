@@ -27,7 +27,8 @@ namespace Client.MessageControl {
                     case "ConnectionAccepted:":
                         Player.getInstance().Name = _message;
                         Player.getInstance().Connected = true;
-                        MainWindow.getInstance().StartGame();
+                        MainWindow.getInstance().SetAvaibility();
+                        //MainWindow.getInstance().StartGame();
                         DebugManager.Game( "Connected as " + Player.getInstance().Name );
                         break;
                     case "NickNameInUse:":
@@ -62,6 +63,17 @@ namespace Client.MessageControl {
                         Line laser = MessageParser.GetLine( _message );
                         GameWindow.getInstance().RemoveFromGameCanvas( Laser.getInstance().GetLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 ) );
                         Laser.getInstance().RemoveLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 );
+                        break;
+                    case "MainWindowMessage:":
+                        string name = MessageParser.GetNick( _message );
+                        _message = MessageParser.RemoveNickFrom( _message );
+                        MainWindow.getInstance().AppendText( name + _message + "\r\n" );
+                        break;
+                    case "AllPlayersAreReady:":
+                        MainWindow.getInstance().AllPlayersReady();
+                        break;
+                    case "Players:":
+                        MainWindow.getInstance().SetPlayerList(_message.Split(','));
                         break;
                 }
             }
