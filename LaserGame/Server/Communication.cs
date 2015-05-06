@@ -57,6 +57,13 @@ namespace Server {
                     case "LaserRemoved:":
                         Server.SendServerMessageExcept( _client, "LaserRemoved:" + _message );
                         break;
+                    case "MainWindowMessage:":
+                        Server.SendServerToAll( _client, "MainWindowMessage:" + _message );
+                        break;
+                    case "ReadyPressed:":
+                        _client.Ready = Boolean.Parse( _message );
+                        Server.PlayersAreReady();
+                        break;
                 }
             }
         }
@@ -70,7 +77,7 @@ namespace Server {
             Tuple<double, double, double, double> line = MessageParser.GetLine( message );
             Server.SendServerMessageExcept( _client, "LaserCreated:" + "COORD2:" + line.Item1 + "," + line.Item2 + "," + line.Item3 + "," + line.Item4 + "ENDCOORD2" );
 
-            ConsoleManager.Communication( _client.NickName + " created a laser at (" + line.Item1 + "," + line.Item2 +") (" + line.Item3 + "," + line.Item4 + ")");
+            ConsoleManager.Communication( _client.NickName + " created a laser at (" + line.Item1 + "," + line.Item2 + ") (" + line.Item3 + "," + line.Item4 + ")" );
         }
 
         private void PortalCreated( string message ) {
@@ -90,6 +97,7 @@ namespace Server {
             if(!Server._nickName.Contains( name ) && !"NotYetSet".Equals( name )) {
                 _client.NickName = name;
                 AcceptConnection();
+                Server.GetPlayerNames();
             } else {
                 ConsoleManager.Communication( "Name \"" + name + "\" already in use. Connection refused." );
                 _client.WriteLine( "NickNameInUse:" );

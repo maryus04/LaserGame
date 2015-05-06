@@ -28,5 +28,20 @@ namespace Client.MessageControl {
             return new Line() { X1 = Double.Parse( points[0] ), Y1 = Double.Parse( points[1] ), X2 = Double.Parse( points[2] ), Y2 = Double.Parse( points[3] ) };
         }
 
+        public static string GetNick( string message ) {
+            int PREFIX_LENGTH = 15;
+            string playerName = message.Substring( message.IndexOf( "NICK:" ) + 5, (message.IndexOf( "ENDNICK" )) - (message.IndexOf( "NICK:" ) + 5) );
+            for(int i = playerName.Length; i < PREFIX_LENGTH; i++) {
+                playerName = playerName + "_";
+            }
+            return playerName+ ":";
+        }
+
+        public static string RemoveNickFrom( string message ) {
+            string playerName = message.Substring( message.IndexOf( "NICK:" ) + 5, (message.IndexOf( "ENDNICK" )) - (message.IndexOf( "NICK:" ) + 5) );
+            message = message.Replace( "NICK:" + playerName + "ENDNICK", "" );
+            return message;
+        }
+
     }
 }

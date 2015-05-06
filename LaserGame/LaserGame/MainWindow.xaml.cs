@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -16,26 +15,81 @@ using System.Drawing;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 using Client.MessageControl;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace Client {
     public partial class MainWindow : Window {
 
         private static MainWindow instance;
+        int port = 4296;
+
+
+        private void Refresh_Click( object sender, RoutedEventArgs e ) {
+            serverListBox.Items.Clear();
+            serverListBox.IsEnabled = false;
+            RefreshServerList();
+        }
+
+        private void RefreshServerList() {
+            IPAddress ipAddress = Array.FindAll( Dns.GetHostAddresses( Dns.GetHostName() ), a => a.AddressFamily == AddressFamily.InterNetwork ).First();
+            string[] baseIP = ipAddress.ToString().Split( '.' );
+
+            for(int j = Int32.Parse( baseIP[2] ); j < Int32.Parse( baseIP[2] ) + 5; j++) {
+                for(int i = 0; i < 255; i++) {
+                    try {
+                        IPAddress ip = IPAddress.Parse( baseIP[0] + "." + baseIP[1] + "." + j + "." + i );
+
+                        Ping ping = new Ping();
+                        ping.PingCompleted += new PingCompletedEventHandler( PingCompleted );
+                        ping.SendAsync( ip, 100, ip );
+                    } catch(Exception) { }
+                }
+            }
+            serverListBox.IsEnabled = true;
+        }
+
+        private void PingCompleted( object sender, PingCompletedEventArgs e ) {
+            if(e.Reply != null && e.Reply.Status == IPStatus.Success) {
+                Thread SearchServer = new Thread( () => CheckServer( e ) );
+                SearchServer.SetApartmentState( ApartmentState.STA );
+                SearchServer.Name = "SearchServer";
+
+                SearchServer.Start();
+            }
+        }
+
+        private void CheckServer( PingCompletedEventArgs e ) {
+            TcpClient connection = new TcpClient();
+            try {
+                connection.Connect( "" + e.UserState, port );
+                if(connection.Connected) {
+                    this.Dispatcher.Invoke( (Action)(() => {
+                        ListBoxItem item = new ListBoxItem();
+                        item.Content = "" + e.UserState;
+                        serverListBox.Items.Add( item );
+                    }) );
+                }
+            } catch(Exception) { }
+        }
 
         public MainWindow() {
             instance = this;
             DebugManager.EnableConsole();
             InitializeComponent();
+            RefreshServerList();
         }
 
-        private void NewGame( object sender, RoutedEventArgs e ) {
+        private void InitiateConnection( object sender, RoutedEventArgs e ) {
             InitConnection();
             SendNickName();
         }
 
-        public void StartGame() {
+        public void StartGame( object sender, RoutedEventArgs e ) {
             this.Dispatcher.Invoke( (Action)(() => { new GameWindow(); this.Close(); }) );
         }
 
@@ -64,7 +118,7 @@ namespace Client {
 
         private void ReadMessages() {
             Thread ReadIncomming = new Thread( () => MessageReader.ReadMessages() );
-            
+
             ReadIncomming.SetApartmentState( ApartmentState.STA );
             ReadIncomming.Name = "ReadMessages";
 
@@ -75,7 +129,7 @@ namespace Client {
             Player.getInstance().WriteLine( "MyName:" + PlayerNameTB.Text );
         }
 
-        public void SetError(string error) {
+        public void SetError( string error ) {
             this.Dispatcher.Invoke( (Action)(() => { ErrorLabel.Content = error; ; }) );
         }
 
@@ -100,5 +154,61 @@ namespace Client {
             return instance;
         }
 
+        private void ServerListView_SelectionChanged( object sender, System.Windows.Controls.SelectionChangedEventArgs e ) {
+            ListBoxItem item = (ListBoxItem)serverListBox.SelectedItem;
+            IpAddTB.Text = "" + item.Content;
+        }
+
+        private void SendMessage( object sender, RoutedEventArgs e ) {
+            if(textName.Text != "") {
+                Player.getInstance().WriteLine( "MainWindowMessage:" + textName.Text );
+            }
+            textName.Text = "";
+        }
+
+        private void ReadyButtonClick( object sender, RoutedEventArgs e ) {
+            Player.getInstance().WriteLine( "ReadyPressed:" + readyButton.IsChecked );
+        }
+
+        public void SetAvaibility() {
+            this.Dispatcher.Invoke( (Action)(() => {
+                textName.KeyDown += textName_KeyDown;
+                sendMessageButton.IsEnabled = true;
+                enterRoomButton.Visibility = System.Windows.Visibility.Hidden;
+                readyButton.Visibility = System.Windows.Visibility.Visible;
+                readyButton.IsEnabled = true;
+                playersList.Visibility = System.Windows.Visibility.Visible;
+                server_list.Visibility = System.Windows.Visibility.Hidden;
+            }) );
+        }
+
+        public void AppendText( string message ) {
+            this.Dispatcher.Invoke( (Action)(() => { textBox.Text += message; }) );
+        }
+
+        private void textName_KeyDown( object sender, System.Windows.Input.KeyEventArgs e ) {
+            if(e.Key == Key.Enter) {
+                SendMessage( null, null );
+            }
+        }
+
+        public void AllPlayersReady() {
+            this.Dispatcher.Invoke( (Action)(() => {
+                readyButton.Visibility = System.Windows.Visibility.Hidden;
+                startGameButton.Visibility = System.Windows.Visibility.Visible;
+                startGameButton.IsEnabled = true;
+            }) );
+        }
+
+        public void SetPlayerList( string[] message ) {
+            this.Dispatcher.Invoke( (Action)(() => {
+                playersList.Items.Clear();
+                foreach(string name in message) {
+                    ListBoxItem item = new ListBoxItem();
+                    item.Content = name;
+                    playersList.Items.Add( item );
+                }
+            }) );
+        }
     }
 }
