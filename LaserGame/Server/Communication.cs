@@ -46,7 +46,9 @@ namespace Server {
                         ValidateNickName( _message );
                         break;
                     case "CloseConnection:":
-                        CloseConnection(); // TODO: SHOULD ANNOUNCE OTHER PLAYERS WHO LEFT THE GAME
+                        Server.SendServerToAll( "MainWindowServerMessage:** " + _client.NickName + " left the room." );
+                        CloseConnection();
+                        Server.SendPlayerNames();
                         break;
                     case "PortalCreated:":
                         PortalCreated( _message );
@@ -58,11 +60,15 @@ namespace Server {
                         Server.SendServerMessageExcept( _client, "LaserRemoved:" + _message );
                         break;
                     case "MainWindowMessage:":
-                        Server.SendServerToAll( _client, "MainWindowMessage:" + _message );
+                        Server.SendPlayerToAll( _client, "MainWindowMessage:" + _message );
                         break;
                     case "ReadyPressed:":
                         _client.Ready = Boolean.Parse( _message );
                         Server.PlayersAreReady();
+                        Server.UpdateReadyStatus( _client );
+                        break;
+                    case "MapChanged:":
+                        Server.SetCurrentMap( _message.Split( ',' ) );
                         break;
                 }
             }
@@ -97,7 +103,8 @@ namespace Server {
             if(!Server._nickName.Contains( name ) && !"NotYetSet".Equals( name )) {
                 _client.NickName = name;
                 AcceptConnection();
-                Server.GetPlayerNames();
+                Server.SendServerToAll( "MainWindowServerMessage:** " + _client.NickName + " joined the room." );
+                Server.SendPlayerNames();
             } else {
                 ConsoleManager.Communication( "Name \"" + name + "\" already in use. Connection refused." );
                 _client.WriteLine( "NickNameInUse:" );

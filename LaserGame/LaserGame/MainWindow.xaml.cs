@@ -21,6 +21,7 @@ using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Windows.Controls;
+using System.Text.RegularExpressions;
 
 namespace Client {
     public partial class MainWindow : Window {
@@ -172,6 +173,9 @@ namespace Client {
 
         public void SetAvaibility() {
             this.Dispatcher.Invoke( (Action)(() => {
+                ipGrid.Visibility = System.Windows.Visibility.Hidden;
+                nameGrid.Visibility = System.Windows.Visibility.Hidden;
+                mapGrip.Visibility = System.Windows.Visibility.Visible;
                 textName.KeyDown += textName_KeyDown;
                 sendMessageButton.IsEnabled = true;
                 enterRoomButton.Visibility = System.Windows.Visibility.Hidden;
@@ -194,9 +198,7 @@ namespace Client {
 
         public void AllPlayersReady() {
             this.Dispatcher.Invoke( (Action)(() => {
-                readyButton.Visibility = System.Windows.Visibility.Hidden;
-                startGameButton.Visibility = System.Windows.Visibility.Visible;
-                startGameButton.IsEnabled = true;
+                StartGame( null, null );
             }) );
         }
 
@@ -209,6 +211,44 @@ namespace Client {
                     playersList.Items.Add( item );
                 }
             }) );
+        }
+
+        public void UpdatePlayerStatus( string playerName, string status ) {
+            this.Dispatcher.Invoke( (Action)(() => {
+                ListBoxItem item = new ListBoxItem();
+                if(Boolean.Parse( status ) == true) {
+                    item.Content = playerName + " -- Ready";
+                } else {
+                    item.Content = playerName;
+                }
+                int index = -1;
+                foreach(ListBoxItem curItem in playersList.Items) {
+                    string itemContent = curItem.Content.ToString();
+                    if(itemContent.Equals( playerName ) || itemContent.Equals( playerName + " -- Ready" )) {
+                        index = playersList.Items.IndexOf( curItem );
+                    }
+                }
+                if(index != -1) {
+                    playersList.Items.RemoveAt( index );
+                    playersList.Items.Insert( index, item );
+                }
+            }) );
+        }
+
+        private void changeMapButton_Click( object sender, RoutedEventArgs e ) {
+            OpenFileDialog dialog = new OpenFileDialog();
+            if(dialog.ShowDialog() == Forms.DialogResult.OK) {
+                if(dialog.FileName.Contains( ".map" )) {
+                    string filename = System.IO.Path.GetFileName( dialog.FileName );
+                    Regex rgx = new Regex( "\r\n.*" );
+
+                    int charPerLine = rgx.Replace( File.ReadAllText( dialog.FileName ), "" ).Count();
+                    string map = File.ReadAllText( dialog.FileName ).Replace( "\r\n", "" );
+
+                    mapNameLabel.Content = filename.Replace( ".map", "" );
+                    Player.getInstance().WriteLine( "MapChanged:" + charPerLine + "," + map );
+                }
+            }
         }
     }
 }

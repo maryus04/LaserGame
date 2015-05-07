@@ -37,6 +37,14 @@ namespace Client.MessageControl {
             return playerName+ ":";
         }
 
+        public static string GetName( string message ) {
+            return message.Substring( message.IndexOf( "NICK:" ) + 5, (message.IndexOf( "ENDNICK" )) - (message.IndexOf( "NICK:" ) + 5) );
+        }
+
+        public static string GetValue( string message ) {
+            return message.Substring( message.IndexOf( "VALUE:" ) + 6, (message.IndexOf( "ENDVALUE" )) - (message.IndexOf( "VALUE:" ) + 6) );
+        }
+
         public static string RemoveNickFrom( string message ) {
             string playerName = message.Substring( message.IndexOf( "NICK:" ) + 5, (message.IndexOf( "ENDNICK" )) - (message.IndexOf( "NICK:" ) + 5) );
             message = message.Replace( "NICK:" + playerName + "ENDNICK", "" );

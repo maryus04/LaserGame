@@ -12,6 +12,9 @@ namespace Server {
         TcpListener _chatServer;
         public static Hashtable _nickName;
 
+        private static string _map;
+        private static int _charPerLine;
+
         public static void Main() {
             if(Environment.MachineName == "NWRMP01") {
                 DialogResult dr = MessageBox.Show( "Would you like to run in debug mode?", "Debug", MessageBoxButtons.YesNo );
@@ -28,10 +31,6 @@ namespace Server {
         }
 
         public Server() {
-            MapParser.SetMapName( "initial.map1" );
-            //Player.width = MapParser.ParseMapDimensions().Item1;
-            //Player.height = MapParser.ParseMapDimensions().Item2;
-
             _nickName = new Hashtable( 100 );
             _chatServer = new TcpListener( IPAddress.Any, 4296 );
             _chatServer.Start();
@@ -49,6 +48,11 @@ namespace Server {
             }
         }
 
+        public static void SetCurrentMap( string[] map ) {
+            _charPerLine = Int32.Parse( map[0] );
+            _map = map[1];
+        }
+
         public static void SendServerMessageExcept( ServerClient sendingClient, string message ) {
             foreach(ServerClient client in _nickName.Values) {
                 if(client == sendingClient) {
@@ -58,7 +62,13 @@ namespace Server {
             }
         }
 
-        public static void SendServerToAll( ServerClient sendingClient, string message ) {
+        public static void SendServerToAll( string message ) {
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( message );
+            }
+        }
+
+        public static void SendPlayerToAll( ServerClient sendingClient, string message ) {
             foreach(ServerClient client in _nickName.Values) {
                 client.WriteLine( message + "NICK:" + sendingClient.NickName + "ENDNICK" );
             }
@@ -69,10 +79,13 @@ namespace Server {
                 client.WriteLine( "AllPlayersAreReady:" );
             }
         }
-        public static string GetPlayerNames() {
+        public static string SendPlayerNames() {
             string names = "";
             foreach(ServerClient client in _nickName.Values) {
                 names += client.NickName + ",";
+            }
+            if(names.Equals( "" )) {
+                return "";
             }
             names = names.Remove( names.Length - 1 );
             foreach(ServerClient client in _nickName.Values) {
@@ -89,7 +102,14 @@ namespace Server {
                 }
             }
             if(ready == true) {
+                ConsoleManager.Server( "All players are ready. Starting the game." );
                 SendReady();
+            }
+        }
+
+        public static void UpdateReadyStatus( ServerClient player ) {
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( "PlayerReady:" + "NICK:" + player.NickName + "ENDNICK" + "VALUE:" + player.Ready + "ENDVALUE" );
             }
         }
 

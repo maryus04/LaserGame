@@ -28,7 +28,6 @@ namespace Client.MessageControl {
                         Player.getInstance().Name = _message;
                         Player.getInstance().Connected = true;
                         MainWindow.getInstance().SetAvaibility();
-                        //MainWindow.getInstance().StartGame();
                         DebugManager.Game( "Connected as " + Player.getInstance().Name );
                         break;
                     case "NickNameInUse:":
@@ -69,11 +68,17 @@ namespace Client.MessageControl {
                         _message = MessageParser.RemoveNickFrom( _message );
                         MainWindow.getInstance().AppendText( name + _message + "\r\n" );
                         break;
+                    case "MainWindowServerMessage:":
+                        MainWindow.getInstance().AppendText( _message + "\r\n" );
+                        break;
                     case "AllPlayersAreReady:":
                         MainWindow.getInstance().AllPlayersReady();
                         break;
                     case "Players:":
-                        MainWindow.getInstance().SetPlayerList(_message.Split(','));
+                        MainWindow.getInstance().SetPlayerList( _message.Split( ',' ) );
+                        break;
+                    case "PlayerReady:":
+                        MainWindow.getInstance().UpdatePlayerStatus( MessageParser.GetName( _message ), MessageParser.GetValue( _message ) );
                         break;
                 }
             }
