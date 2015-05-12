@@ -29,6 +29,7 @@ namespace Client {
         }
 
         public GameWindow() {
+            this.KeyDown += new KeyEventHandler( GameWindow_KeyDown );
             instance = this;
 
             InitializeComponent();
@@ -43,12 +44,31 @@ namespace Client {
             //Laser.getInstance().BuildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
         }
 
+        private void GameWindow_KeyDown( object sender, KeyEventArgs e ) {
+            if((Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt) {
+                if(Keyboard.IsKeyDown( Key.Enter )) {
+                    if(this.WindowState == System.Windows.WindowState.Normal) {
+                        this.WindowStyle = System.Windows.WindowStyle.None;
+                        this.WindowState = System.Windows.WindowState.Maximized;
+                    } else {
+                        this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+                        this.WindowState = System.Windows.WindowState.Normal;
+                    }
+                }
+            }
+        }
+
+        public void SetGridLayout( int width, int height ) {
+            gameCanvas.Width = width;
+            gameCanvas.Height = height;
+        }
+
         public void CanvasChanged() {
             DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
             this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
         }
 
-        public void CreateMap(string map) {
+        public void CreateMap( string map ) {
             this.Dispatcher.Invoke( (Action)(() => { MapParser.ParseMap( map.Split( ',' ) ); }) );
         }
 
@@ -81,7 +101,7 @@ namespace Client {
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
-            Player.getInstance().WriteLine( "PortalCreated:COORD:" + e.GetPosition( gameCanvas ).X + "," + e.GetPosition( gameCanvas ).Y + "ENDCOORD" );
+            Player.getInstance().WriteLine( "PortalCreated:COORD:" + Convert.ToInt64( e.GetPosition( gameCanvas ).X ) + "," + Convert.ToInt64( e.GetPosition( gameCanvas ).Y ) + "ENDCOORD" );
         }
 
 
@@ -96,7 +116,7 @@ namespace Client {
 
         public void PortalRemovedByOtherPlayer( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.RemovePortalByRectangle( centerPoint ); }) );
-            DebugManager.DebugGame( "Removing other player portal from (" + centerPoint.X + "," + centerPoint.Y +")");
+            DebugManager.DebugGame( "Removing other player portal from (" + centerPoint.X + "," + centerPoint.Y + ")" );
         }
 
         public static GameWindow getInstance() {

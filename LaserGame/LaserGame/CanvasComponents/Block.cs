@@ -12,7 +12,7 @@ namespace Client.CanvasComponents {
         public string BlockType { get; set; }
         public Rectangle BlockItem { get; set; }
 
-        public Block(string blockType, Rectangle block) {
+        public Block( string blockType, Rectangle block ) {
             BlockType = blockType;
             BlockItem = block;
         }
@@ -22,6 +22,7 @@ namespace Client.CanvasComponents {
                 Width = width,
                 Height = height,
                 Stroke = color,
+                Fill = color,
                 StrokeThickness = 2
             };
             Canvas.SetLeft( rect, leftPossition );

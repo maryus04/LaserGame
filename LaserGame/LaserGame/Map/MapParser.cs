@@ -12,21 +12,39 @@ namespace Client.Map {
     static class MapParser {
 
         private static List<string> _map = new List<string>();
-        private static int _width, _height = 0;
         private static List<string> _parsedPart = new List<string>();
+        private static int _width, _height = 0;
         private static int _curParsingRow = 0;
         private static int _curParsingColumn = 0;
 
-        public static readonly int MULTIPLY = 13;
+        private static int _multiplierX = 1;
+        private static int _multiplierY = 1;
 
         public static void ParseMap( string[] map ) {
-            _width = Int32.Parse( map[0] );
-            _height = map.Length - 2;
+            _width = Int32.Parse( map[0] ) + 2;
+
+            _map.Add( ConstructLine( map[1].Length ) );
             for(int i = 1; i < map.Length; i++) {
-                _map.Add( map[i].ToUpper() );
+                _map.Add( "H" + map[i].ToUpper() + "H" );
             }
+            _map.Add( ConstructLine( _width ) );
+
+            _height = _map.Count - 1;
+
+            var screen = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+
+            MapParser.SetMultiplier( screen.Width / _width, screen.Height / _height );
+            GameWindow.getInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
 
             StartDrawing();
+        }
+
+        private static string ConstructLine( int width ) {
+            string line = "";
+            for(int i = 0; i < width + 2; i++) {
+                line += "H";
+            }
+            return line;
         }
 
         private static string GetNextChar() {
@@ -52,10 +70,10 @@ namespace Client.Map {
 
                     Tuple<int, int, int, int> diagonal = GetBlockPoints( currentChar );
 
-                    int x = (diagonal.Item3 + 1) * MULTIPLY - diagonal.Item1 * MULTIPLY;
-                    int y = (diagonal.Item4 + 1) * MULTIPLY - diagonal.Item2 * MULTIPLY;
-                    int blockWidth = diagonal.Item1 * MULTIPLY;
-                    int blockHeight = diagonal.Item2 * MULTIPLY;
+                    int x = (diagonal.Item3 + 1) * _multiplierX - diagonal.Item1 * _multiplierX;
+                    int y = (diagonal.Item4 + 1) * _multiplierY - diagonal.Item2 * _multiplierY;
+                    int blockWidth = diagonal.Item1 * _multiplierX;
+                    int blockHeight = diagonal.Item2 * _multiplierY;
 
                     switch(currentChar) {
                         case "H":
@@ -131,6 +149,11 @@ namespace Client.Map {
                 return "" + _map[peekRow][peekColumn];
             }
             return "";
+        }
+
+        public static void SetMultiplier( int x, int y ) {
+            _multiplierX = x;
+            _multiplierY = y;
         }
 
         private static string PeekPosition() {

@@ -65,7 +65,6 @@ namespace Server {
                     case "ReadyPressed:":
                         _client.Ready = Boolean.Parse( _message );
                         Server.PlayersAreReady();
-                        Server.SendServerToAll( "MapAccepted:" + Server.GetCurrectMap() );
                         Server.UpdateReadyStatus( _client );
                         break;
                     case "MapChanged:":

@@ -107,6 +107,7 @@ namespace Server {
             if(ready == true) {
                 ConsoleManager.Server( "All players are ready. Starting the game." );
                 SendReady();
+                Server.SendServerToAll( "MapAccepted:" + Server.GetCurrectMap() );
             }
         }
 
