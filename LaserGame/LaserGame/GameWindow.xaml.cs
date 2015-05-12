@@ -9,9 +9,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Client.LaserComponents;
 using Client.CanvasBehavior;
 using System.Threading;
+using Client.Map;
+using Client.CanvasComponents;
 
 namespace Client {
     public partial class GameWindow : Window {
@@ -35,19 +36,24 @@ namespace Client {
             new Laser( gameCanvas, debugCanvas );
             new Portals();
 
-            BuildMap();
             Laser.getInstance().BuildLaserLine( new Point( 0, 400 ), new Point( 500, 400 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 500, 500 ), new Point( 500, 0 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 200, 0 ), new Point( 200, 300 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 700, 300 ), new Point( 0, 300 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
-
-            this.Show();
         }
 
         public void CanvasChanged() {
             DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
             this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
+        }
+
+        public void CreateMap(string map) {
+            this.Dispatcher.Invoke( (Action)(() => { MapParser.ParseMap( map.Split( ',' ) ); }) );
+        }
+
+        public void ShowGame() {
+            this.Dispatcher.Invoke( (Action)(() => { this.Show(); }) );
         }
 
         public void ConstructLaser() {
@@ -72,11 +78,6 @@ namespace Client {
 
         public void RemoveFromGameCanvas( UIElement block ) {
             this.Dispatcher.Invoke( (Action)(() => { gameCanvas.Children.Remove( block ); }) );
-        }
-
-        private void BuildMap() { // TODO: should have a string mapName parameter and use the map parser (the map should be recieved from server if it dosent have)
-            HardBlock.Add( "HardBlock", Block.Create( 200, 300, 400, 0, Brushes.Green ) );
-            HardBlock.Add( "HardBlock", Block.Create( 188, 127, 109, 126, Brushes.Green ) );
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {

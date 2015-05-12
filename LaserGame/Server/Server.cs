@@ -13,7 +13,6 @@ namespace Server {
         public static Hashtable _nickName;
 
         private static string _map;
-        private static int _charPerLine;
 
         public static void Main() {
             if(Environment.MachineName == "NWRMP01") {
@@ -48,9 +47,12 @@ namespace Server {
             }
         }
 
-        public static void SetCurrentMap( string[] map ) {
-            _charPerLine = Int32.Parse( map[0] );
-            _map = map[1];
+        public static void SetCurrentMap( string map ) {
+            _map = map;
+        }
+
+        public static string GetCurrectMap() {
+            return _map;
         }
 
         public static void SendServerMessageExcept( ServerClient sendingClient, string message ) {
@@ -79,6 +81,7 @@ namespace Server {
                 client.WriteLine( "AllPlayersAreReady:" );
             }
         }
+
         public static string SendPlayerNames() {
             string names = "";
             foreach(ServerClient client in _nickName.Values) {

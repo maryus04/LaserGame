@@ -97,6 +97,7 @@
     <Compile Include="CanvasComponents\HardBlock.cs" />
     <Compile Include="CanvasComponents\Portals.cs" />
     <Compile Include="CanvasBehavior\CanvasBlocks.cs" />
+    <Compile Include="CanvasComponents\StarBlock.cs" />
     <Compile Include="DebugManager.cs" />
     <Compile Include="CanvasComponents\Laser.cs" />
     <Compile Include="GameWindow.xaml.cs">
@@ -120,6 +121,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Map\MapParser.cs" />
     <Compile Include="MessageControl\MessageParser.cs" />
     <Compile Include="MessageControl\MessageReader.cs" />
     <Compile Include="Player.cs" />
@@ -142,6 +144,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Maps\illusion.map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

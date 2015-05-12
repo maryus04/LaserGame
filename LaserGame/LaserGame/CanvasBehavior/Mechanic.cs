@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows;
+using Client.CanvasComponents;
 
 namespace Client.CanvasBehavior {
     public class Mechanic {

@@ -6,7 +6,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows;
 using System.Windows.Shapes;
-using Client.LaserComponents;
+using Client.Map;
+using Client.CanvasComponents;
 
 namespace Client.MessageControl {
     class MessageReader {
@@ -79,6 +80,9 @@ namespace Client.MessageControl {
                         break;
                     case "PlayerReady:":
                         MainWindow.getInstance().UpdatePlayerStatus( MessageParser.GetName( _message ), MessageParser.GetValue( _message ) );
+                        break;
+                    case "MapAccepted:":
+                        GameWindow.getInstance().CreateMap( _message );
                         break;
                 }
             }

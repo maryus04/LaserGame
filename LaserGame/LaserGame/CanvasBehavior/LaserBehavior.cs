@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Collections.ObjectModel;
 using Client.CanvasBehavior;
-using Client.LaserComponents;
+using Client.CanvasComponents;
 
 namespace Client.CanvasBehavior {
     static class LaserBehavior {

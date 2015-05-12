@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Shapes;
 using System.Collections;
-using Client.LaserComponents;
+using Client.CanvasBehavior;
 
-namespace Client.CanvasBehavior {
+namespace Client.CanvasComponents {
     class Portals {
 
         private static Portals instance;

@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Controls;
 
-namespace Client.CanvasBehavior {
+namespace Client.CanvasComponents {
     class Block {
 
         public string BlockType { get; set; }
@@ -22,7 +22,7 @@ namespace Client.CanvasBehavior {
                 Width = width,
                 Height = height,
                 Stroke = color,
-                StrokeThickness = 10
+                StrokeThickness = 2
             };
             Canvas.SetLeft( rect, leftPossition );
             Canvas.SetTop( rect, topPossition );

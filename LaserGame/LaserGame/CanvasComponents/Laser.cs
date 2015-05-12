@@ -12,7 +12,7 @@ using Client.CanvasBehavior;
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace Client.LaserComponents {
+namespace Client.CanvasComponents {
     class Laser {
 
         private static Laser instance;

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Client.CanvasBehavior;
+using Client.CanvasComponents;
 
 namespace Client.CanvasBehavior {
     class PortalBehavior {

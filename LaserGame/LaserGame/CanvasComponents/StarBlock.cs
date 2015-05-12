@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Shapes;
 using Client.CanvasBehavior;
+using System.Windows.Shapes;
 
 namespace Client.CanvasComponents {
-    class HardBlock {
+    class StarBlock {
 
-        public static void Add(string blockName , Rectangle block ) {
-            CanvasBlocks.list.Add( new Block(blockName , block) );
+        public static void Add( string blockName, Rectangle block ) {
+            CanvasBlocks.list.Add( new Block( blockName, block ) );
             GameWindow.getInstance().AddToGameCanvas( block );
         }
 
