@@ -70,6 +70,10 @@ namespace Server {
                     case "MapChanged:":
                         Server.SetCurrentMap( _message );
                         break;
+                    case "MyResolution:":
+                        _client.SetResolution( MessageParser.GetPointsFromMessage( _message ) );
+                        Server.CheckResolution();
+                        break;
                 }
             }
         }

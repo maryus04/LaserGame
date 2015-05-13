@@ -111,6 +111,23 @@ namespace Server {
             }
         }
 
+        public static void CheckResolution() {
+            bool ready = false;
+            Tuple<int, int> resolution = Tuple.Create( 9999, 9999 );
+            foreach(ServerClient client in _nickName.Values) {
+                if(client.Resolution == null) {
+                    return;
+                }
+                if(client.Resolution.Item1 < resolution.Item1 && client.Resolution.Item2 < resolution.Item2) {
+                    resolution = client.Resolution;
+                    ready = true;
+                }
+            }
+            if(ready == true) {
+                Server.SendServerToAll( "Resolution:COORD:" + resolution.Item1 + "," + resolution.Item2 + "ENDCOORD" );
+            }
+        }
+
         public static void UpdateReadyStatus( ServerClient player ) {
             foreach(ServerClient client in _nickName.Values) {
                 client.WriteLine( "PlayerReady:" + "NICK:" + player.NickName + "ENDNICK" + "VALUE:" + player.Ready + "ENDVALUE" );

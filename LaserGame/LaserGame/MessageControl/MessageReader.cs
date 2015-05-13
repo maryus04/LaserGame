@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using Client.Map;
 using Client.CanvasComponents;
+using Client.CanvasBehavior;
 
 namespace Client.MessageControl {
     class MessageReader {
@@ -83,6 +84,9 @@ namespace Client.MessageControl {
                         break;
                     case "MapAccepted:":
                         GameWindow.getInstance().CreateMap( _message );
+                        break;
+                    case "Resolution:":
+                        GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => { MapParser.SetResolution( MessageParser.GetPoint( _message ) ); }) );
                         break;
                 }
             }

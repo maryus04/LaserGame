@@ -59,8 +59,10 @@ namespace Client {
         }
 
         public void SetGridLayout( int width, int height ) {
-            gameCanvas.Width = width;
-            gameCanvas.Height = height;
+            this.Dispatcher.Invoke( (Action)(() => {
+                gameCanvas.Width = width;
+                gameCanvas.Height = height;
+            }) );
         }
 
         public void CanvasChanged() {

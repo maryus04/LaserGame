@@ -29,12 +29,17 @@ namespace Client.Map {
 
             var screen = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 
-            MapParser.SetMultiplier( screen.Width / _width, screen.Height / _height );
+            Player.getInstance().WriteLine( "MyResolution:COORD:" + screen.Width + "," + screen.Height + "ENDCOORD" );
+        }
+
+        public static void SetResolution(Point resolution) {
+            MapParser.SetMultiplier( (int)resolution.X / _width, (int)resolution.Y / _height );
             PortalBehavior.SetDimensions( _multiplierX, _multiplierY );
             GameWindow.getInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
 
             StartDrawing();
         }
+
 
         private static void StartDrawing() {
             string currentChar = "" + _map[0][0];
