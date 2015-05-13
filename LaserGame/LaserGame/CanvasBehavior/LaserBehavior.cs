@@ -12,6 +12,8 @@ using Client.CanvasComponents;
 namespace Client.CanvasBehavior {
     static class LaserBehavior {
 
+        private static readonly Point INVALID_POINT = new Point( -1, -1 );
+
         public static void GetAllIntersectionPointsForDebug( List<Line> laser ) { //TODO: this is not really nice ...find another way to debug laser
             var child = GameWindow.getInstance().gameCanvas.Children;
             var rectlist = child.OfType<Rectangle>();
@@ -27,17 +29,17 @@ namespace Client.CanvasBehavior {
         public static Point GetInterLastLineAllBlocks( Line lastLine ) {
             foreach(Block block in CanvasBlocks.list) {
                 Point temp;
-                if((temp = Mechanic.GetIntersectionPointLineRect( lastLine, block.BlockItem )) != new Point( -1, -1 )) {
+                if((temp = Mechanic.GetIntersectionPointLineRect( lastLine, block.BlockItem )) != INVALID_POINT) {
                     return temp;
                 }
             }
-            return new Point( -1, -1 );
+            return INVALID_POINT;
         }
 
         public static string IntersectionLinePortals( Line lastLine ) {
-            if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().FirstPortal ) != new Point( -1, -1 )) {
+            if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().FirstPortal ) != INVALID_POINT) {
                 return "first";
-            } else if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().SecondPortal ) != new Point( -1, -1 )) {
+            } else if(Mechanic.GetIntersectionPointLineRect( lastLine, Portals.getInstance().SecondPortal ) != INVALID_POINT) {
                 return "second";
             } else
                 return "none";
@@ -46,7 +48,7 @@ namespace Client.CanvasBehavior {
         public static void BuildPortalLine( Rectangle portalStart ) {
             double x = Canvas.GetLeft( portalStart );
             double y = Canvas.GetTop( portalStart );
-            Tuple<string, Point> result = Mechanic.GetLaserPathAndBlockCollision( new Line() { X1 = x, Y1 = y, X2 = x + 10, Y2 = y + 10 } );
+            Tuple<string, Point> result = Mechanic.GetLaserPathAndBlockCollision( new Line() { X1 = x, Y1 = y, X2 = x + PortalBehavior.WIDTH, Y2 = y + PortalBehavior.HEIGHT } );
             Line lastLine = Laser.getInstance().GetLastLine();
             switch(result.Item1) {
                 case "UP"://180

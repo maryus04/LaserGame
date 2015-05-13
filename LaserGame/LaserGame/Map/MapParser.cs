@@ -30,6 +30,7 @@ namespace Client.Map {
             var screen = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 
             MapParser.SetMultiplier( screen.Width / _width, screen.Height / _height );
+            PortalBehavior.SetDimensions( _multiplierX, _multiplierY );
             GameWindow.getInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
 
             StartDrawing();

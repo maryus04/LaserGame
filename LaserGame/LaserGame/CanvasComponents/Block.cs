@@ -21,9 +21,7 @@ namespace Client.CanvasComponents {
             Rectangle rect = new Rectangle {
                 Width = width,
                 Height = height,
-                Stroke = color,
-                Fill = color,
-                StrokeThickness = 2
+                Fill = color
             };
             Canvas.SetLeft( rect, leftPossition );
             Canvas.SetTop( rect, topPossition );
