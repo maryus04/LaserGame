@@ -15,6 +15,8 @@ using System.Collections.Specialized;
 namespace Client.CanvasComponents {
     class Laser {
 
+        private static readonly Point INVALID_POINT = new Point( -1, -1 );
+
         private static Laser instance;
 
         private SortedDictionary<string, Line> _laserLines = new SortedDictionary<string, Line>();
@@ -108,7 +110,7 @@ namespace Client.CanvasComponents {
             return myLine;
         }
 
-        private static Line BuildIntersectedLaserLine(Point p1, Point p2 ) {
+        private static Line BuildIntersectedLaserLine( Point p1, Point p2 ) {
             Line myLine = new Line();
             myLine.Stroke = System.Windows.Media.Brushes.Red;
             myLine.X1 = p1.X;
@@ -121,7 +123,7 @@ namespace Client.CanvasComponents {
 
             Point firstIntersectionPoint;
 
-            if((firstIntersectionPoint = LaserBehavior.GetInterLastLineAllBlocks( myLine )) != new Point( -1, -1 )) {
+            if((firstIntersectionPoint = LaserBehavior.GetInterLastLineAllBlocks( myLine )) != INVALID_POINT) {
                 myLine.X2 = firstIntersectionPoint.X;
                 myLine.Y2 = firstIntersectionPoint.Y;
             }

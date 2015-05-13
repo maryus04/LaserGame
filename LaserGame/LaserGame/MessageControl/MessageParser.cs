@@ -34,7 +34,7 @@ namespace Client.MessageControl {
             for(int i = playerName.Length; i < PREFIX_LENGTH; i++) {
                 playerName = playerName + "_";
             }
-            return playerName+ ":";
+            return playerName + ":";
         }
 
         public static string GetName( string message ) {
