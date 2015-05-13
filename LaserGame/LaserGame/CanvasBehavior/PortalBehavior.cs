@@ -19,7 +19,7 @@ namespace Client.CanvasBehavior {
         }
 
         public static void DrawPortal( Point centerPoint ) {
-            DebugManager.Game( "Added portal at (" + centerPoint.X + "," + centerPoint.Y + ")");
+            DebugManager.Game( "Added portal at (" + centerPoint.X + "," + centerPoint.Y + ")" );
             Rectangle portal = CreatePortal( centerPoint );
             Portals.getInstance().OtherPortals.Add( centerPoint, portal );
             GameWindow.getInstance().gameCanvas.Children.Add( portal );
@@ -55,11 +55,11 @@ namespace Client.CanvasBehavior {
 
         public static Point GetMyCurrentPortalCenterPoint() { // TODO: TRY TO MAKE IT BETTER
             if(Player.getInstance().FirstClick && Portals.getInstance().FirstPortal != null && Portals.getInstance().SecondPortal != null) {
-                return new Point(Canvas.GetLeft( Portals.getInstance().FirstPortal )+5 , Canvas.GetTop( Portals.getInstance().FirstPortal )+5);
+                return new Point( Canvas.GetLeft( Portals.getInstance().FirstPortal ) + 5, Canvas.GetTop( Portals.getInstance().FirstPortal ) + 5 );
             } else if(!Player.getInstance().FirstClick && Portals.getInstance().FirstPortal != null && Portals.getInstance().SecondPortal != null) {
                 return new Point( Canvas.GetLeft( Portals.getInstance().SecondPortal ) + 5, Canvas.GetTop( Portals.getInstance().SecondPortal ) + 5 ); ;
             } else {
-                return new Point(-1,-1);
+                return new Point( -1, -1 );
             }
         }
 

@@ -108,7 +108,7 @@ namespace Client.CanvasComponents {
             return myLine;
         }
 
-        private static Line BuildIntersectedLaserLine(Point p1, Point p2 ) {
+        private static Line BuildIntersectedLaserLine( Point p1, Point p2 ) {
             Line myLine = new Line();
             myLine.Stroke = System.Windows.Media.Brushes.Red;
             myLine.X1 = p1.X;

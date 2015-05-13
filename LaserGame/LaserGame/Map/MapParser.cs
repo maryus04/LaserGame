@@ -23,11 +23,7 @@ namespace Client.Map {
         public static void ParseMap( string[] map ) {
             _width = Int32.Parse( map[0] ) + 2;
 
-            _map.Add( ConstructLine( map[1].Length ) );
-            for(int i = 1; i < map.Length; i++) {
-                _map.Add( "H" + map[i].ToUpper() + "H" );
-            }
-            _map.Add( ConstructLine( _width ) );
+            CreateMap( map );
 
             _height = _map.Count - 1;
 
@@ -39,27 +35,6 @@ namespace Client.Map {
             StartDrawing();
         }
 
-        private static string ConstructLine( int width ) {
-            string line = "";
-            for(int i = 0; i < width + 2; i++) {
-                line += "H";
-            }
-            return line;
-        }
-
-        private static string GetNextChar() {
-            _curParsingColumn++;
-
-            if(_curParsingColumn > _width && _curParsingRow + 1 <= _height) {
-                _curParsingColumn = 0;
-                _curParsingRow++;
-                return "" + _map[_curParsingRow][_curParsingColumn];
-            } else if(_curParsingColumn <= _width && _curParsingRow <= _height) {
-                return "" + _map[_curParsingRow][_curParsingColumn];
-            }
-            return "";
-        }
-
         private static void StartDrawing() {
             string currentChar = "" + _map[0][0];
 
@@ -68,12 +43,11 @@ namespace Client.Map {
                 if(!_parsedPart.Contains( "" + _curParsingRow + "." + _curParsingColumn )) {
                     SetCurrentChar();
 
-                    Tuple<int, int, int, int> diagonal = GetBlockPoints( currentChar );
-
-                    int x = (diagonal.Item3 + 1) * _multiplierX - diagonal.Item1 * _multiplierX;
-                    int y = (diagonal.Item4 + 1) * _multiplierY - diagonal.Item2 * _multiplierY;
-                    int blockWidth = diagonal.Item1 * _multiplierX;
-                    int blockHeight = diagonal.Item2 * _multiplierY;
+                    int x;
+                    int y;
+                    int blockWidth;
+                    int blockHeight;
+                    ExtractBlockDimensionAndMultiply( currentChar, out x, out y, out blockWidth, out blockHeight );
 
                     switch(currentChar) {
                         case "H":
@@ -90,6 +64,15 @@ namespace Client.Map {
                 currentChar = GetNextChar();
             }
             GameWindow.getInstance().ShowGame();
+        }
+
+        private static void ExtractBlockDimensionAndMultiply( string currentChar, out int x, out int y, out int blockWidth, out int blockHeight ) {
+            Tuple<int, int, int, int> diagonal = GetBlockPoints( currentChar );
+
+            x = (diagonal.Item3 + 1) * _multiplierX - diagonal.Item1 * _multiplierX;
+            y = (diagonal.Item4 + 1) * _multiplierY - diagonal.Item2 * _multiplierY;
+            blockWidth = diagonal.Item1 * _multiplierX;
+            blockHeight = diagonal.Item2 * _multiplierY;
         }
 
         private static Tuple<int, int, int, int> GetBlockPoints( string character ) {
@@ -131,10 +114,36 @@ namespace Client.Map {
             return curRow - 1;
         }
 
-        private static void SetParsedLine( List<string> parsedParts ) {
-            foreach(string parse in parsedParts) {
-                _parsedPart.Add( parse );
+        private static string ConstructLine( int width ) {
+            string line = "";
+            for(int i = 0; i < width + 2; i++) {
+                line += "H";
             }
+            return line;
+        }
+
+        private static string GetNextChar() {
+            _curParsingColumn++;
+
+            if(_curParsingColumn > _width && _curParsingRow + 1 <= _height) {
+                _curParsingColumn = 0;
+                _curParsingRow++;
+                return "" + _map[_curParsingRow][_curParsingColumn];
+            } else if(_curParsingColumn <= _width && _curParsingRow <= _height) {
+                return "" + _map[_curParsingRow][_curParsingColumn];
+            }
+            return "";
+        }
+
+        private static string PeekCharAt( int row, int column ) {
+            if(column > _width && row + 1 <= _height) {
+                column = 0;
+                row++;
+                return "" + _map[row][column];
+            } else if(column <= _width && row <= _height) {
+                return "" + _map[row][column];
+            }
+            return "";
         }
 
         private static string PeekNextChar() {
@@ -151,11 +160,6 @@ namespace Client.Map {
             return "";
         }
 
-        public static void SetMultiplier( int x, int y ) {
-            _multiplierX = x;
-            _multiplierY = y;
-        }
-
         private static string PeekPosition() {
             int peekColumn = _curParsingColumn + 1;
             int peekRow = _curParsingRow;
@@ -170,16 +174,23 @@ namespace Client.Map {
             return "";
         }
 
-
-        private static string PeekCharAt( int row, int column ) {
-            if(column > _width && row + 1 <= _height) {
-                column = 0;
-                row++;
-                return "" + _map[row][column];
-            } else if(column <= _width && row <= _height) {
-                return "" + _map[row][column];
+        private static void SetParsedLine( List<string> parsedParts ) {
+            foreach(string parse in parsedParts) {
+                _parsedPart.Add( parse );
             }
-            return "";
+        }
+
+        private static void CreateMap( string[] map ) {
+            _map.Add( ConstructLine( map[1].Length ) );
+            for(int i = 1; i < map.Length; i++) {
+                _map.Add( "H" + map[i].ToUpper() + "H" );
+            }
+            _map.Add( ConstructLine( _width ) );
+        }
+
+        private static void SetMultiplier( int x, int y ) {
+            _multiplierX = x;
+            _multiplierY = y;
         }
 
         private static void SetCurrentChar() {

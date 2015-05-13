@@ -239,16 +239,27 @@ namespace Client {
             OpenFileDialog dialog = new OpenFileDialog();
             if(dialog.ShowDialog() == Forms.DialogResult.OK) {
                 if(dialog.FileName.Contains( ".map" )) {
-                    string filename = System.IO.Path.GetFileName( dialog.FileName );
-                    Regex rgx = new Regex( @"(\n(.*\s*)*)" );
+                    GetMapName( dialog );
 
-                    int charPerLine = rgx.Replace( File.ReadAllText( dialog.FileName ), "" ).Count() - 2;
-                    string map = File.ReadAllText( dialog.FileName ).Replace( "\r\n", "," );
-
-                    mapNameLabel.Content = filename.Replace( ".map", "" );
-                    Player.getInstance().WriteLine( "MapChanged:" + charPerLine + "," + map );
+                    ParseMap( dialog );
                 }
             }
+        }
+
+        private static void ParseMap( OpenFileDialog dialog ) {
+            Regex rgx = new Regex( @"(\n(.*\s*)*)" );
+            int charPerLine = rgx.Replace( File.ReadAllText( dialog.FileName ), "" ).Count() - 2;
+
+            string map = File.ReadAllText( dialog.FileName ).Replace( "\r\n", "," );
+
+            Player.getInstance().WriteLine( "MapChanged:" + charPerLine + "," + map );
+        }
+
+        private void GetMapName( OpenFileDialog dialog ) {
+            string filename = System.IO.Path.GetFileName( dialog.FileName );
+            mapNameLabel.Content = filename.Replace( ".map", "" );
+
+            Player.getInstance().WriteLine( "MapName:" + mapNameLabel.Content );
         }
     }
 }
