@@ -26,5 +26,9 @@ namespace Server.MessageControl {
             return Tuple.Create( Convert.ToInt32( points[0] ), Convert.ToInt32( points[1] ) );
         }
 
+        public static string GetValue( string message ) {
+            return message.Substring( message.IndexOf( "VALUE:" ) + 6, (message.IndexOf( "ENDVALUE" )) - (message.IndexOf( "VALUE:" ) + 6) );
+        }
+
     }
 }

@@ -16,7 +16,7 @@ namespace Client.CanvasBehavior {
 
         public static Point GetInterLastLineAllBlocks( string buildingDirection, Line lastLine ) {
             var blockList = CanvasBlocks.list;
-            if("UP".Equals( buildingDirection )) {
+            if("UP".Equals( buildingDirection ) || "RIGHT".Equals( buildingDirection )) {
                 blockList = CanvasBlocks.list.AsEnumerable().Reverse<Block>().ToList();
             }
             foreach(Block block in blockList) {

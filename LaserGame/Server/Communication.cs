@@ -85,7 +85,8 @@ namespace Server {
 
         private void LaserCreated( string message ) {
             Tuple<double, double, double, double> line = MessageParser.GetLine( message );
-            Server.SendServerMessageExcept( _client, "LaserCreated:" + "COORD2:" + line.Item1 + "," + line.Item2 + "," + line.Item3 + "," + line.Item4 + "ENDCOORD2" );
+            string buildingDirection = MessageParser.GetValue( message );
+            Server.SendServerMessageExcept( _client, "LaserCreated:VALUE:" + buildingDirection + "ENDVALUE" + "COORD2:" + line.Item1 + "," + line.Item2 + "," + line.Item3 + "," + line.Item4 + "ENDCOORD2" );
 
             ConsoleManager.Communication( _client.NickName + " created a laser at (" + line.Item1 + "," + line.Item2 + ") (" + line.Item3 + "," + line.Item4 + ")" );
         }
