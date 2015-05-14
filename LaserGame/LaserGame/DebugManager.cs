@@ -88,45 +88,5 @@ namespace Client {
             }
             return temp;
         }
-
-        // ===========================================================LASER DEBUG
-        private static List<Point> _pointsToBeDrawn = new List<Point>();
-
-        public static List<Point> PointsToBeDrawn {
-            set {
-                if(_debugMode) {
-                    _pointsToBeDrawn = value;
-                }
-            }
-            get { return _pointsToBeDrawn; }
-        }
-
-        public static void DebugLaser( Canvas debugCanvas ) {
-            if(!_debugMode) return;
-            DeletePointsFromCanvas( debugCanvas );
-            foreach(Point intersection in _pointsToBeDrawn) {
-                DrawPoint( debugCanvas, intersection );
-            }
-            DeletePointList( debugCanvas );
-        }
-
-        private static void DrawPoint( Canvas canvas, Point point ) {
-            if(!DebugManager.DebugMode) return;
-            var ellipse = new Ellipse() { Width = 8, Height = 8, Fill = new SolidColorBrush( Colors.Blue ), Stroke = new SolidColorBrush( Colors.Blue ) };
-            Canvas.SetLeft( ellipse, point.X - 4 );
-            Canvas.SetTop( ellipse, point.Y - 4 );
-            canvas.Children.Add( ellipse );
-        }
-
-        private static void DeletePointList( Canvas canvas ) {
-            if(!DebugManager.DebugMode) return;
-            _pointsToBeDrawn = new List<Point>();
-        }
-
-        private static void DeletePointsFromCanvas( Canvas canvas ) {
-            if(!DebugManager.DebugMode) return;
-            canvas.Children.RemoveRange( 0, canvas.Children.Count );
-        }
-
     }
 }

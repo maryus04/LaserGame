@@ -34,10 +34,10 @@ namespace Client {
 
             InitializeComponent();
 
-            new Laser( gameCanvas, debugCanvas );
+            new Laser();
             new Portals();
 
-            Laser.getInstance().BuildLaserLine( new Point( 0, 200 ), new Point( 500, 200 ) ); //x
+            Laser.getInstance().BuildLaserLine( "LEFT", new Point( 0, 200 ), new Point( 500, 200 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 500, 500 ), new Point( 500, 0 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 200, 0 ), new Point( 200, 300 ) ); //x
             //Laser.getInstance().BuildLaserLine( new Point( 700, 300 ), new Point( 0, 300 ) ); //x

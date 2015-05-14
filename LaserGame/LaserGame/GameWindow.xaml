@@ -7,8 +7,6 @@
         <Grid x:Name="GameGrid" Width="Auto" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Canvas x:Name="gameCanvas" MouseDown="Canvas_Clicked" Background="White">
             </Canvas>
-            <Canvas x:Name="debugCanvas" MouseDown="Canvas_Clicked">
-            </Canvas>
         </Grid>
     </Viewbox>
 </Window>

@@ -23,7 +23,7 @@ namespace Client.CanvasComponents {
 
         private Line _myLaser;
 
-        public Laser( Canvas gameCanvas, Canvas debugCanvas ) {
+        public Laser() {
             instance = this;
         }
 
@@ -35,7 +35,6 @@ namespace Client.CanvasComponents {
         }
 
         private void ListChanged( object sender, EventArgs e ) {
-            GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => { LaserBehavior.GetAllIntersectionPointsForDebug( Laser.getInstance().GetAllLines() ); }) );
         }
 
         public Line GetLine( string lineCoord ) {
@@ -77,12 +76,12 @@ namespace Client.CanvasComponents {
             _laserLines.Add( "" + line.X1 + line.Y1 + line.X2 + line.Y2, line );
         }
 
-        public void CreateLaserFromOpositePortal( Point startPoint, int radian ) {
+        public void CreateLaserFromOpositePortal( string buildingDirection, Point startPoint, int radian ) {
             RotateTransform rotation = new RotateTransform( radian );
             Point p1 = rotation.Transform( new Point( GetLastLine().X1, GetLastLine().Y1 ) );
             Point p2 = rotation.Transform( new Point( GetLastLine().X2, GetLastLine().Y2 ) );
 
-            BuildMyLaserLine( startPoint, MoveLine( p1, p2, startPoint ) );
+            BuildMyLaserLine( buildingDirection, startPoint, MoveLine( p1, p2, startPoint ) );
         }
 
         // Origin1 is used to calculate distance between the first points of the two lines(since we have accesonly to the first point of second line)
@@ -94,23 +93,23 @@ namespace Client.CanvasComponents {
         }
 
 
-        public Line BuildMyLaserLine( Point p1, Point p2 ) {
-            _myLaser = BuildIntersectedLaserLine( p1, p2 );
+        public Line BuildMyLaserLine( string buildingDirection, Point p1, Point p2 ) {
+            _myLaser = BuildIntersectedLaserLine( buildingDirection, p1, p2 );
 
             GameWindow.getInstance().AddToGameCanvas( _myLaser );
-            Player.getInstance().WriteLine( "LaserCreated:" + "COORD2:" + _myLaser.X1 + "," + _myLaser.Y1 + "," + _myLaser.X2 + "," + _myLaser.Y2 + "ENDCOORD2" );
+            Player.getInstance().WriteLine( "LaserCreated:VALUE:" + buildingDirection + "ENDVALUE" + "COORD2:" + _myLaser.X1 + "," + _myLaser.Y1 + "," + _myLaser.X2 + "," + _myLaser.Y2 + "ENDCOORD2" );
             return _myLaser;
         }
 
-        public Line BuildLaserLine( Point p1, Point p2 ) {
-            Line myLine = BuildIntersectedLaserLine( p1, p2 );
+        public Line BuildLaserLine( string buildingDirection, Point p1, Point p2 ) {
+            Line myLine = BuildIntersectedLaserLine( buildingDirection, p1, p2 );
 
             AddLine( myLine );
             GameWindow.getInstance().AddToGameCanvas( myLine );
             return myLine;
         }
 
-        private static Line BuildIntersectedLaserLine( Point p1, Point p2 ) {
+        private static Line BuildIntersectedLaserLine( string buildingDirection, Point p1, Point p2 ) {
             Line myLine = new Line();
             myLine.Stroke = System.Windows.Media.Brushes.Red;
             myLine.X1 = p1.X;
@@ -123,7 +122,7 @@ namespace Client.CanvasComponents {
 
             Point firstIntersectionPoint;
 
-            if((firstIntersectionPoint = LaserBehavior.GetInterLastLineAllBlocks( myLine )) != INVALID_POINT) {
+            if((firstIntersectionPoint = LaserBehavior.GetInterLastLineAllBlocks( buildingDirection, myLine )) != INVALID_POINT) {
                 myLine.X2 = firstIntersectionPoint.X;
                 myLine.Y2 = firstIntersectionPoint.Y;
             }

@@ -56,7 +56,7 @@ namespace Client.MessageControl {
                     case "LaserCreated:":
                         GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => {
                             Line line = MessageParser.GetLine( entireMessage );
-                            Laser.getInstance().BuildLaserLine( new Point( line.X1, line.Y1 ), new Point( line.X2, line.Y2 ) );
+                            Laser.getInstance().BuildLaserLine( MessageParser.GetValue( entireMessage ), new Point( line.X1, line.Y1 ), new Point( line.X2, line.Y2 ) );
                         }) );
                         GameWindow.getInstance().ConstructLaser();
                         break;

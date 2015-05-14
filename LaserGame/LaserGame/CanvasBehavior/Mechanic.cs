@@ -16,44 +16,52 @@ namespace Client.CanvasBehavior {
             double rectX = Canvas.GetLeft( rect );
             double rectY = Canvas.GetTop( rect );
 
+            Point rectLeftTop;
+            Point rectRightTop;
+            Point rectRightBot;
+            Point rectLeftBot;
+            GetRectanglePoints( rect, rectX, rectY, out rectLeftTop, out rectRightTop, out rectRightBot, out rectLeftBot );
+
             Point firstLinePoint = new Point( line.X1, line.Y1 );
             Point secondLinePoint = new Point( line.X2, line.Y2 );
-            List<Point> fourIntersectionPoints = new List<Point>();
 
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.Width, rectY ) ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY ), new Point( rectX + rect.Width, rectY + rect.Height ) ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.Width, rectY + rect.Height ), new Point( rectX, rectY + rect.Height ) ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.Height ), new Point( rectX, rectY ) ) );
-
-            return GetClosestPoint( firstLinePoint, fourIntersectionPoints );
+            return GetFirstColissionPoint( ref rectLeftTop, ref rectRightTop, ref rectRightBot, ref rectLeftBot, ref firstLinePoint, ref secondLinePoint );
         }
 
-        public static Point GetClosestPoint( Point origin, List<Point> pointList ) {
-            var closestPoints = pointList.Where( point => point != origin && point != INVALID_POINT )
-                                         .OrderBy( point => SmartDistanceCalcTwoPoints( origin, point ) )
-                                         .Take( 1 );
-            if(closestPoints.Count() > 0) {
-                return closestPoints.First();
-            } else {
-                return INVALID_POINT;
-            }
+        private static Point GetFirstColissionPoint( ref Point rectLeftTop, ref Point rectRightTop, ref Point rectRightBot, ref Point rectLeftBot, ref Point firstLinePoint, ref Point secondLinePoint ) {
+            List<Point> fourIntersectionPoints = new List<Point>();
+
+            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftTop, rectRightTop ) );
+            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightTop, rectRightBot ) );
+            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightBot, rectLeftBot ) );
+            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftBot, rectLeftTop ) );
+
+            return GetClosestPoint( firstLinePoint, fourIntersectionPoints );
         }
 
         public static Tuple<string, Point> GetLaserPathAndBlockCollision( Line line ) {
             Point firstLinePoint = new Point( line.X1, line.Y1 );
             Point secondLinePoint = new Point( line.X2, line.Y2 );
+
             foreach(Block rect in CanvasBlocks.list) {
                 double rectX = Canvas.GetLeft( rect.BlockItem );
                 double rectY = Canvas.GetTop( rect.BlockItem );
-                Point temp;
-                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY ), new Point( rectX + rect.BlockItem.Width, rectY ) )) != INVALID_POINT)
-                    return Tuple.Create( "UP", temp );
-                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY ), new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ) )) != INVALID_POINT)
-                    return Tuple.Create( "RIGHT", temp );
-                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX + rect.BlockItem.Width, rectY + rect.BlockItem.Height ), new Point( rectX, rectY + rect.BlockItem.Height ) )) != INVALID_POINT)
-                    return Tuple.Create( "DOWN", temp );
-                if((temp = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, new Point( rectX, rectY + rect.BlockItem.Height ), new Point( rectX, rectY ) )) != INVALID_POINT)
-                    return Tuple.Create( "LEFT", temp );
+
+                Point rectLeftTop;
+                Point rectRightTop;
+                Point rectRightBot;
+                Point rectLeftBot;
+                GetRectanglePoints( rect.BlockItem, rectX, rectY, out rectLeftTop, out rectRightTop, out rectRightBot, out rectLeftBot );
+
+                Point intersectionPoint;
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftTop, rectRightTop )) != INVALID_POINT)
+                    return Tuple.Create( "UP", intersectionPoint );
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightTop, rectRightBot )) != INVALID_POINT)
+                    return Tuple.Create( "RIGHT", intersectionPoint );
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightBot, rectLeftBot )) != INVALID_POINT)
+                    return Tuple.Create( "DOWN", intersectionPoint );
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftBot, rectLeftTop )) != INVALID_POINT)
+                    return Tuple.Create( "LEFT", intersectionPoint );
             }
 
             return Tuple.Create( "NONE", INVALID_POINT );
@@ -79,9 +87,6 @@ namespace Client.CanvasBehavior {
             if(!(IsOnLine( lp1, lp2, intersection ) && IsOnLine( rp1, rp2, intersection ))) {
                 return INVALID_POINT;
             }
-
-            DebugManager.PointsToBeDrawn.Add( intersection );
-
             return intersection;
         }
 
@@ -90,6 +95,24 @@ namespace Client.CanvasBehavior {
                 ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y)) ||
                 ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
                 ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y));
+        }
+
+        public static Point GetClosestPoint( Point origin, List<Point> pointList ) {
+            var closestPoints = pointList.Where( point => point != origin && point != INVALID_POINT )
+                                         .OrderBy( point => SmartDistanceCalcTwoPoints( origin, point ) )
+                                         .Take( 1 );
+            if(closestPoints.Count() > 0) {
+                return closestPoints.First();
+            } else {
+                return INVALID_POINT;
+            }
+        }
+
+        private static void GetRectanglePoints( Rectangle rect, double rectX, double rectY, out Point rectLeftTop, out Point rectRightTop, out Point rectRightBot, out Point rectLeftBot ) {
+            rectLeftTop = new Point( rectX, rectY );
+            rectRightTop = new Point( rectX + rect.Width, rectY );
+            rectRightBot = new Point( rectX + rect.Width, rectY + rect.Height );
+            rectLeftBot = new Point( rectX, rectY + rect.Height );
         }
 
         private static double SmartDistanceCalcTwoPoints( Point source, Point target ) {
