@@ -78,18 +78,18 @@ namespace Client.CanvasComponents {
 
         public void CreateLaserFromOpositePortal( string buildingDirection, Point startPoint, int radian ) {
             RotateTransform rotation = new RotateTransform( radian );
-            Point p1 = rotation.Transform( new Point( GetLastLine().X1, GetLastLine().Y1 ) );
-            Point p2 = rotation.Transform( new Point( GetLastLine().X2, GetLastLine().Y2 ) );
+            Point startLaser = rotation.Transform( new Point( GetLastLine().X1, GetLastLine().Y1 ) );
+            Point endLaser = rotation.Transform( new Point( GetLastLine().X2, GetLastLine().Y2 ) );
 
-            BuildMyLaserLine( buildingDirection, startPoint, MoveLine( p1, p2, startPoint ) );
+            BuildMyLaserLine( buildingDirection, startPoint, MoveLine( startLaser, endLaser, startPoint ) );
         }
 
         // Origin1 is used to calculate distance between the first points of the two lines(since we have accesonly to the first point of second line)
-        public Point MoveLine( Point origin1, Point origin2, Point moveTo ) {
-            double x = origin1.X - moveTo.X;
-            double y = origin1.Y - moveTo.Y;
+        public Point MoveLine( Point origin, Point toBeMovedPoint, Point moveTo ) {
+            double x = origin.X - moveTo.X;
+            double y = origin.Y - moveTo.Y;
 
-            return new Point( origin2.X - x, origin2.Y - y );
+            return new Point( toBeMovedPoint.X - x, toBeMovedPoint.Y - y );
         }
 
 
