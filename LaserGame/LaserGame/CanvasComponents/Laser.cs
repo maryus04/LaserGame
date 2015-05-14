@@ -102,8 +102,10 @@ namespace Client.CanvasComponents {
         }
 
         public Line BuildLaserLine( string buildingDirection, Point p1, Point p2 ) {
-            Line myLine = BuildIntersectedLaserLine( buildingDirection, p1, p2 );
+            Line myLine = new Line() { X1 = p1.X, Y1 = p1.Y, X2 = p2.X, Y2 = p2.Y };
 
+            myLine.StrokeThickness = 1;
+            myLine.Stroke = System.Windows.Media.Brushes.Red;
             AddLine( myLine );
             GameWindow.getInstance().AddToGameCanvas( myLine );
             return myLine;
@@ -118,6 +120,20 @@ namespace Client.CanvasComponents {
             myLine.X2 = endPoint.X;
             myLine.Y2 = endPoint.Y;
 
+            switch(buildingDirection) {
+                case "UP":
+                    myLine.Y2 = 0;
+                    break;
+                case "DOWN":
+                    myLine.Y2 *= 900;
+                    break;
+                case "LEFT":
+                    myLine.X2 = 0;
+                    break;
+                case "RIGHT":
+                    myLine.X2 *= 900;
+                    break;
+            }
             myLine.StrokeThickness = 1;
 
             Point firstIntersectionPoint;
