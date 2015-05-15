@@ -16,6 +16,10 @@ namespace Server {
 
         private static bool _gameStarted = false;
 
+        private static int _startCountDown = 3;
+
+        private static System.Threading.Timer _timer;
+
         public static void Main() {
             if(Environment.MachineName == "NWRMP01") {
                 DialogResult dr = MessageBox.Show( "Would you like to run in debug mode?", "Debug", MessageBoxButtons.YesNo );
@@ -108,12 +112,7 @@ namespace Server {
             }
             if(ready == true && !_gameStarted && MapExists()) {
                 ConsoleManager.Server( "All players are ready. Starting the game." );
-                SendReady();
-                _gameStarted = true;
-                Server.SendServerToAll( "MapAccepted:" + Server.GetCurrectMap() );
-                foreach(ServerClient client in _nickName.Values) {
-                    client.Status = "-- In game";
-                }
+                _timer = new System.Threading.Timer( TimerCallback, null, 0, 1000 );
             } else if(_gameStarted) {
                 ConsoleManager.Server( "Someone is tring to connect while the game is already started." );
                 Server.SendServerToAll( "MainWindowServerMessage:** Game already started." );
@@ -121,6 +120,21 @@ namespace Server {
                 ConsoleManager.ServerWarn( "No map found. Game wont start." );
                 Server.SendServerToAll( "MainWindowServerMessage:** No map have been selected." );
             }
+        }
+
+        private static void TimerCallback( Object o ) {
+            _startCountDown -= 1;
+
+            if(_startCountDown == 0) {
+                _timer.Dispose();
+                SendReady();
+                _gameStarted = true;
+                Server.SendServerToAll( "MapAccepted:" + Server.GetCurrectMap() );
+                foreach(ServerClient client in _nickName.Values) {
+                    client.Status = "-- In game";
+                }
+            }
+            Server.SendServerToAll( "MainWindowServerMessage:** Game starts in " + _startCountDown );
         }
 
         private static bool MapExists() {
