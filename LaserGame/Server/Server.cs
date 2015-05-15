@@ -106,7 +106,7 @@ namespace Server {
                     ready = false;
                 }
             }
-            if(ready == true && !_gameStarted) {
+            if(ready == true && !_gameStarted && MapExists()) {
                 ConsoleManager.Server( "All players are ready. Starting the game." );
                 SendReady();
                 _gameStarted = true;
@@ -117,7 +117,17 @@ namespace Server {
             } else if(_gameStarted) {
                 ConsoleManager.Server( "Someone is tring to connect while the game is already started." );
                 Server.SendServerToAll( "MainWindowServerMessage:** Game already started." );
+            } else if(ready == true && !MapExists()) {
+                ConsoleManager.ServerWarn( "No map found. Game wont start." );
+                Server.SendServerToAll( "MainWindowServerMessage:** No map have been selected." );
             }
+        }
+
+        private static bool MapExists() {
+            if(_map != null) {
+                return true;
+            }
+            return false;
         }
 
         public static void CheckResolution() {
