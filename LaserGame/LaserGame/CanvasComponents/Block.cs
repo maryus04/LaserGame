@@ -11,10 +11,12 @@ namespace Client.CanvasComponents {
 
         public string BlockType { get; set; }
         public Rectangle BlockItem { get; set; }
+        public bool Collide { get; set; }
 
-        public Block( string blockType, Rectangle block ) {
+        public Block( string blockType, Rectangle block, bool collide ) {
             BlockType = blockType;
             BlockItem = block;
+            Collide = collide;
         }
 
         public static Rectangle Create( int width, int height, int leftPossition, int topPossition, Brush color ) {
