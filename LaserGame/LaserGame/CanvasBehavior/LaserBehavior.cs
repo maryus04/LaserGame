@@ -45,46 +45,46 @@ namespace Client.CanvasBehavior {
             switch(result.Item1) {
                 case "UP"://180
                     if(lastLine.Y1 > lastLine.Y2) {//up
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 0 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 0 );
                     } else if(lastLine.X1 < lastLine.X2) {//right
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 270 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 270 );
                     } else if(lastLine.Y1 < lastLine.Y2) {// down
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 180 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 180 );
                     } else if(lastLine.X1 > lastLine.X2) {//left
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 90 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 90 );
                     }
                     break;
                 case "DOWN"://0
                     if(lastLine.Y1 > lastLine.Y2) {//up
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 180 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 180 );
                     } else if(lastLine.X1 < lastLine.X2) {//right
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 90 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 90 );
                     } else if(lastLine.Y1 < lastLine.Y2) {// down
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 0 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 0 );
                     } else if(lastLine.X1 > lastLine.X2) {//left
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 270 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( x + PortalBehavior.WIDTH / 2, result.Item2.Y ), 270 );
                     }
                     break;
                 case "LEFT"://90
                     if(lastLine.Y1 > lastLine.Y2) {//up
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 270 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 270 );
                     } else if(lastLine.X1 < lastLine.X2) {//right
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 180 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 180 );
                     } else if(lastLine.Y1 < lastLine.Y2) {// down
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 90 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 90 );
                     } else if(lastLine.X1 > lastLine.X2) {//left
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 0 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 0 );
                     }
                     break;
                 case "RIGHT"://270
                     if(lastLine.Y1 > lastLine.Y2) {//up
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 90 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 90 );
                     } else if(lastLine.X1 < lastLine.X2) {//right
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 0 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 0 );
                     } else if(lastLine.Y1 < lastLine.Y2) {// down
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 270 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 270 );
                     } else if(lastLine.X1 > lastLine.X2) {//left
-                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, result.Item2, 180 );
+                        Laser.getInstance().CreateLaserFromOpositePortal( result.Item1, new Point( result.Item2.X, y + PortalBehavior.HEIGHT / 2 ), 180 );
                     }
                     break;
             }
