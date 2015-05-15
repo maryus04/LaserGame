@@ -23,7 +23,7 @@ namespace Server {
 
         public Tuple<int, int> Resolution { get; set; }
 
-        public bool Ready { get; set; }
+        public string Status = "-- Main menu";
 
         public string NickName {
             get { return nickName; }

@@ -71,10 +71,14 @@ namespace Client.MessageControl {
                         MainWindow.getInstance().AppendText( name + _message + "\r\n" );
                         break;
                     case "MainWindowServerMessage:":
-                        MainWindow.getInstance().AppendText( _message + "\r\n" );
+                        if(MainWindow.getInstance() != null) {
+                            MainWindow.getInstance().AppendText( _message + "\r\n" );
+                        }
                         break;
                     case "AllPlayersAreReady:":
-                        MainWindow.getInstance().AllPlayersReady();
+                        if(MainWindow.getInstance() != null) {
+                            MainWindow.getInstance().AllPlayersReady();
+                        }
                         break;
                     case "Players:":
                         MainWindow.getInstance().SetPlayerList( _message.Split( ',' ) );

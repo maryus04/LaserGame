@@ -14,6 +14,8 @@ namespace Server {
 
         private static string _map;
 
+        private static bool _gameStarted = false;
+
         public static void Main() {
             if(Environment.MachineName == "NWRMP01") {
                 DialogResult dr = MessageBox.Show( "Would you like to run in debug mode?", "Debug", MessageBoxButtons.YesNo );
@@ -85,7 +87,7 @@ namespace Server {
         public static string SendPlayerNames() {
             string names = "";
             foreach(ServerClient client in _nickName.Values) {
-                names += client.NickName + ",";
+                names += client.NickName + client.Status + ",";
             }
             if(names.Equals( "" )) {
                 return "";
@@ -100,14 +102,21 @@ namespace Server {
         public static void PlayersAreReady() {
             bool ready = true;
             foreach(ServerClient client in _nickName.Values) {
-                if(client.Ready == false) {
+                if(!"True".Equals( client.Status )) {
                     ready = false;
                 }
             }
-            if(ready == true) {
+            if(ready == true && !_gameStarted) {
                 ConsoleManager.Server( "All players are ready. Starting the game." );
                 SendReady();
+                _gameStarted = true;
                 Server.SendServerToAll( "MapAccepted:" + Server.GetCurrectMap() );
+                foreach(ServerClient client in _nickName.Values) {
+                    client.Status = "-- In game";
+                }
+            } else if(_gameStarted) {
+                ConsoleManager.Server( "Someone is tring to connect while the game is already started." );
+                Server.SendServerToAll( "MainWindowServerMessage:** Game already started." );
             }
         }
 
@@ -130,7 +139,7 @@ namespace Server {
 
         public static void UpdateReadyStatus( ServerClient player ) {
             foreach(ServerClient client in _nickName.Values) {
-                client.WriteLine( "PlayerReady:" + "NICK:" + player.NickName + "ENDNICK" + "VALUE:" + player.Ready + "ENDVALUE" );
+                client.WriteLine( "PlayerReady:" + "NICK:" + player.NickName + "ENDNICK" + "VALUE:" + player.Status + "ENDVALUE" );
             }
         }
 

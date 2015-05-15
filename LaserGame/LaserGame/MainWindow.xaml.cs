@@ -149,9 +149,6 @@ namespace Client {
         }
 
         public static MainWindow getInstance() {
-            if(instance == null) {
-                instance = new MainWindow();
-            }
             return instance;
         }
 
@@ -216,15 +213,16 @@ namespace Client {
         public void UpdatePlayerStatus( string playerName, string status ) {
             this.Dispatcher.Invoke( (Action)(() => {
                 ListBoxItem item = new ListBoxItem();
-                if(Boolean.Parse( status ) == true) {
-                    item.Content = playerName + " -- Ready";
-                } else {
-                    item.Content = playerName;
+                if("True".Equals( status )) {
+                    item.Content = playerName + "-- Ready";
+                } else if("False".Equals( status )) {
+                    item.Content = playerName + "-- Main menu";
                 }
                 int index = -1;
                 foreach(ListBoxItem curItem in playersList.Items) {
                     string itemContent = curItem.Content.ToString();
-                    if(itemContent.Equals( playerName ) || itemContent.Equals( playerName + " -- Ready" )) {
+                    string[] name = itemContent.Split( '-' );
+                    if(name[0].Equals( playerName )) {
                         index = playersList.Items.IndexOf( curItem );
                     }
                 }

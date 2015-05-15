@@ -63,7 +63,7 @@ namespace Server {
                         Server.SendPlayerToAll( _client, "MainWindowMessage:" + _message );
                         break;
                     case "ReadyPressed:":
-                        _client.Ready = Boolean.Parse( _message );
+                        _client.Status = _message;
                         Server.PlayersAreReady();
                         Server.UpdateReadyStatus( _client );
                         break;
