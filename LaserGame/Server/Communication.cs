@@ -74,6 +74,9 @@ namespace Server {
                         _client.SetResolution( MessageParser.GetPointsFromMessage( _message ) );
                         Server.CheckResolution();
                         break;
+                    case "MaxStarHit:":
+                        Server.Win();
+                        break;
                 }
             }
         }

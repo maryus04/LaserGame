@@ -8,8 +8,8 @@ using Client.CanvasBehavior;
 namespace Client.CanvasComponents {
     class HardBlock {
 
-        public static void Add( string blockName, Rectangle block ) {
-            CanvasBlocks.list.Add( new Block( blockName, block, true ) );
+        public static void Add( Rectangle block ) {
+            CanvasBlocks.list.Add( new Block( "HardBlock", block, true ) );
             GameWindow.getInstance().AddToGameCanvas( block );
         }
 

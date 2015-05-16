@@ -8,8 +8,8 @@ using System.Windows.Shapes;
 namespace Client.CanvasComponents {
     class StarBlock {
 
-        public static void Add( string blockName, Rectangle block ) {
-            CanvasBlocks.list.Add( new Block( blockName, block, false ) );
+        public static void Add( Rectangle block ) {
+            CanvasBlocks.list.Add( new Block( "StarBlock", block, false ) );
             GameWindow.getInstance().AddToGameCanvas( block );
         }
 

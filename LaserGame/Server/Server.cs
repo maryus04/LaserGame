@@ -170,5 +170,9 @@ namespace Server {
         private void newCommunication( TcpClient connection ) {
             new Communication( connection );
         }
+
+        internal static void Win() {
+            ConsoleManager.Server( "Game finished" );
+        }
     }
 }

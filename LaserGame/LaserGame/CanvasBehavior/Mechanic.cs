@@ -12,69 +12,78 @@ namespace Client.CanvasBehavior {
 
         private static readonly Point INVALID_POINT = new Point( -1, -1 );
 
-        public static Point GetIntersectionPointLineRect( Line line, Rectangle rect ) {
-            double rectX = Canvas.GetLeft( rect );
-            double rectY = Canvas.GetTop( rect );
+        public static Point GetIntersectionPointLineRect( Line laser, Rectangle block ) {
 
-            Point rectLeftTop;
-            Point rectRightTop;
-            Point rectRightBot;
-            Point rectLeftBot;
-            GetRectanglePoints( rect, rectX, rectY, out rectLeftTop, out rectRightTop, out rectRightBot, out rectLeftBot );
+            double blockX;
+            double blockY;
 
-            Point firstLinePoint = new Point( line.X1, line.Y1 );
-            Point secondLinePoint = new Point( line.X2, line.Y2 );
+            Point blockLeftTop;
+            Point blockRightTop;
+            Point blockRightBot;
+            Point blockLeftBot;
 
-            return GetFirstColissionPoint( ref rectLeftTop, ref rectRightTop, ref rectRightBot, ref rectLeftBot, ref firstLinePoint, ref secondLinePoint );
+            Point firstLlaserPoint;
+            Point secondLlaserPoint;
+
+            GetBlockXY( block, out blockX, out blockY );
+            GetBlockPoints( block, blockX, blockY, out blockLeftTop, out blockRightTop, out blockRightBot, out blockLeftBot );
+            ExctractLaserPoints( laser, out firstLlaserPoint, out secondLlaserPoint );
+
+            return GetFirstColissionPoint( ref blockLeftTop, ref blockRightTop, ref blockRightBot, ref blockLeftBot, ref firstLlaserPoint, ref secondLlaserPoint );
         }
 
-        private static Point GetFirstColissionPoint( ref Point rectLeftTop, ref Point rectRightTop, ref Point rectRightBot, ref Point rectLeftBot, ref Point firstLinePoint, ref Point secondLinePoint ) {
-            List<Point> fourIntersectionPoints = new List<Point>();
+        private static Point GetFirstColissionPoint( ref Point blockLeftTop, ref Point blockRightTop, ref Point blockRightBot, ref Point blockLeftBot, ref Point firstLaserPoint, ref Point secondLaserPoint ) {
+            List<Point> blockIntersectionPoints = new List<Point>();
 
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftTop, rectRightTop ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightTop, rectRightBot ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightBot, rectLeftBot ) );
-            fourIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftBot, rectLeftTop ) );
+            blockIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockLeftTop, blockRightTop ) );
+            blockIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockRightTop, blockRightBot ) );
+            blockIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockRightBot, blockLeftBot ) );
+            blockIntersectionPoints.Add( GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockLeftBot, blockLeftTop ) );
 
-            return GetClosestPoint( firstLinePoint, fourIntersectionPoints );
+            return GetClosestPoint( firstLaserPoint, blockIntersectionPoints );
         }
 
         public static Tuple<string, Point> GetLaserPathAndBlockCollision( Line line ) {
-            Point firstLinePoint = new Point( line.X1, line.Y1 );
-            Point secondLinePoint = new Point( line.X2, line.Y2 );
+            Point firstLaserPoint = new Point( line.X1, line.Y1 );
+            Point secondLaserPoint = new Point( line.X2, line.Y2 );
 
-            foreach(Block rect in CanvasBlocks.list) {
-                double rectX = Canvas.GetLeft( rect.BlockItem );
-                double rectY = Canvas.GetTop( rect.BlockItem );
+            foreach(Block block in CanvasBlocks.list) {
+                if(!block.Collide) {
+                    continue;
+                }
 
-                Point rectLeftTop;
-                Point rectRightTop;
-                Point rectRightBot;
-                Point rectLeftBot;
-                GetRectanglePoints( rect.BlockItem, rectX, rectY, out rectLeftTop, out rectRightTop, out rectRightBot, out rectLeftBot );
+                double blockX;
+                double blockY;
+                Point blockLeftTop;
+                Point blockRightTop;
+                Point blockRightBot;
+                Point blockLeftBot;
+
+                GetBlockXY( block.BlockItem, out blockX, out blockY );
+                GetBlockPoints( block.BlockItem, blockX, blockY, out blockLeftTop, out blockRightTop, out blockRightBot, out blockLeftBot );
 
                 Point intersectionPoint;
-                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftTop, rectRightTop )) != INVALID_POINT)
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockLeftTop, blockRightTop )) != INVALID_POINT)
                     return Tuple.Create( "UP", intersectionPoint );
-                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightTop, rectRightBot )) != INVALID_POINT)
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockRightTop, blockRightBot )) != INVALID_POINT)
                     return Tuple.Create( "RIGHT", intersectionPoint );
-                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectRightBot, rectLeftBot )) != INVALID_POINT)
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockRightBot, blockLeftBot )) != INVALID_POINT)
                     return Tuple.Create( "DOWN", intersectionPoint );
-                if((intersectionPoint = GetIntersectionPointTwoLines( firstLinePoint, secondLinePoint, rectLeftBot, rectLeftTop )) != INVALID_POINT)
+                if((intersectionPoint = GetIntersectionPointTwoLines( firstLaserPoint, secondLaserPoint, blockLeftBot, blockLeftTop )) != INVALID_POINT)
                     return Tuple.Create( "LEFT", intersectionPoint );
             }
 
             return Tuple.Create( "NONE", INVALID_POINT );
         }
 
-        public static Point GetIntersectionPointTwoLines( Point lp1, Point lp2, Point rp1, Point rp2 ) {
-            double A1 = lp2.Y - lp1.Y;
-            double B1 = lp1.X - lp2.X;
-            double C1 = A1 * lp1.X + B1 * lp1.Y;
+        public static Point GetIntersectionPointTwoLines( Point firstLaserPoint, Point secondLaserPoint, Point firstBlockPoint, Point secondBlockPoint ) {
+            double A1 = secondLaserPoint.Y - firstLaserPoint.Y;
+            double B1 = firstLaserPoint.X - secondLaserPoint.X;
+            double C1 = A1 * firstLaserPoint.X + B1 * firstLaserPoint.Y;
 
-            double A2 = rp2.Y - rp1.Y;
-            double B2 = rp1.X - rp2.X;
-            double C2 = A2 * rp1.X + B2 * rp1.Y;
+            double A2 = secondBlockPoint.Y - firstBlockPoint.Y;
+            double B2 = firstBlockPoint.X - secondBlockPoint.X;
+            double C2 = A2 * firstBlockPoint.X + B2 * firstBlockPoint.Y;
 
             double delta = A1 * B2 - A2 * B1;
 
@@ -84,17 +93,17 @@ namespace Client.CanvasBehavior {
 
             Point intersection = new Point( (B2 * C1 - B1 * C2) / delta, (A1 * C2 - A2 * C1) / delta );
 
-            if(!(IsOnLine( lp1, lp2, intersection ) && IsOnLine( rp1, rp2, intersection ))) {
+            if(!(IsOnLine( firstLaserPoint, secondLaserPoint, intersection ) && IsOnLine( firstBlockPoint, secondBlockPoint, intersection ))) {
                 return INVALID_POINT;
             }
             return intersection;
         }
 
-        public static bool IsOnLine( Point lp1, Point lp2, Point pt ) {
-            return ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
-                ((pt.X >= lp1.X && pt.X <= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y)) ||
-                ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y >= lp1.Y && pt.Y <= lp2.Y)) ||
-                ((pt.X <= lp1.X && pt.X >= lp2.X) && (pt.Y <= lp1.Y && pt.Y >= lp2.Y));
+        public static bool IsOnLine( Point firstLaserPoint, Point secondLaserPoint, Point collisionPoint ) {
+            return ((collisionPoint.X >= firstLaserPoint.X && collisionPoint.X <= secondLaserPoint.X) && (collisionPoint.Y >= firstLaserPoint.Y && collisionPoint.Y <= secondLaserPoint.Y)) ||
+                ((collisionPoint.X >= firstLaserPoint.X && collisionPoint.X <= secondLaserPoint.X) && (collisionPoint.Y <= firstLaserPoint.Y && collisionPoint.Y >= secondLaserPoint.Y)) ||
+                ((collisionPoint.X <= firstLaserPoint.X && collisionPoint.X >= secondLaserPoint.X) && (collisionPoint.Y >= firstLaserPoint.Y && collisionPoint.Y <= secondLaserPoint.Y)) ||
+                ((collisionPoint.X <= firstLaserPoint.X && collisionPoint.X >= secondLaserPoint.X) && (collisionPoint.Y <= firstLaserPoint.Y && collisionPoint.Y >= secondLaserPoint.Y));
         }
 
         public static Point GetClosestPoint( Point origin, List<Point> pointList ) {
@@ -108,7 +117,17 @@ namespace Client.CanvasBehavior {
             }
         }
 
-        private static void GetRectanglePoints( Rectangle rect, double rectX, double rectY, out Point rectLeftTop, out Point rectRightTop, out Point rectRightBot, out Point rectLeftBot ) {
+        private static void GetBlockXY( Rectangle rect, out double rectX, out double rectY ) {
+            rectX = Canvas.GetLeft( rect );
+            rectY = Canvas.GetTop( rect );
+        }
+
+        private static void ExctractLaserPoints( Line line, out Point firstLinePoint, out Point secondLinePoint ) {
+            firstLinePoint = new Point( line.X1, line.Y1 );
+            secondLinePoint = new Point( line.X2, line.Y2 );
+        }
+
+        private static void GetBlockPoints( Rectangle rect, double rectX, double rectY, out Point rectLeftTop, out Point rectRightTop, out Point rectRightBot, out Point rectLeftBot ) {
             rectLeftTop = new Point( rectX, rectY );
             rectRightTop = new Point( rectX + rect.Width, rectY );
             rectRightBot = new Point( rectX + rect.Width, rectY + rect.Height );

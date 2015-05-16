@@ -17,6 +17,8 @@ namespace Client.Map {
         private static int _curParsingRow = 0;
         private static int _curParsingColumn = 0;
 
+        public static int _starNumber = 0;
+
         private static int _multiplierX = 1;
         private static int _multiplierY = 1;
 
@@ -32,7 +34,7 @@ namespace Client.Map {
             Player.getInstance().WriteLine( "MyResolution:COORD:" + screen.Width + "," + screen.Height + "ENDCOORD" );
         }
 
-        public static void SetResolution(Point resolution) {
+        public static void SetResolution( Point resolution ) {
             MapParser.SetMultiplier( (int)resolution.X / _width, (int)resolution.Y / _height );
             PortalBehavior.SetDimensions( _multiplierX, _multiplierY );
             GameWindow.getInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
@@ -57,10 +59,11 @@ namespace Client.Map {
 
                     switch(currentChar) {
                         case "H":
-                            HardBlock.Add( "HardBlock", Block.Create( x, y, blockWidth, blockHeight, Brushes.Green ) );
+                            HardBlock.Add( Block.Create( x, y, blockWidth, blockHeight, Brushes.Green ) );
                             break;
                         case "S":
-                            StarBlock.Add( "StarBlock", Block.Create( x, y, blockWidth, blockHeight, Brushes.Gold ) );
+                            StarBlock.Add( Block.Create( x, y, blockWidth, blockHeight, Brushes.Gold ) );
+                            _starNumber++;
                             break;
                         default:
                             break;
@@ -187,10 +190,12 @@ namespace Client.Map {
         }
 
         private static void CreateMap( string[] map ) {
-            _map.Add( ConstructLine( map[1].Length ) );
+            _map.Add( ConstructLine( _width ) );
+
             for(int i = 1; i < map.Length; i++) {
                 _map.Add( "H" + map[i].ToUpper() + "H" );
             }
+
             _map.Add( ConstructLine( _width ) );
         }
 

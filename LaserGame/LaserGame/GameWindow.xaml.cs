@@ -19,6 +19,8 @@ namespace Client {
 
         private static GameWindow instance;
 
+        private static int currentHitStarts = 0;
+
         public static bool IsGameStarted {
             get {
                 if(instance == null) {
@@ -66,8 +68,12 @@ namespace Client {
         }
 
         public void CanvasChanged() {
-            DebugManager.GameWarn( "Canvas changed. Removing all lasers." );
+            DebugManager.GameWarn( "Canvas changed.\n\tRemoving all lasers.\n\tStar count set to zero." );
             this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
+        }
+
+        public void ResetStars() {
+            currentHitStarts = 0;
         }
 
         public void CreateMap( string map ) {
@@ -103,9 +109,9 @@ namespace Client {
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
+            ResetStars();
             Player.getInstance().WriteLine( "PortalCreated:COORD:" + Convert.ToInt64( e.GetPosition( gameCanvas ).X ) + "," + Convert.ToInt64( e.GetPosition( gameCanvas ).Y ) + "ENDCOORD" );
         }
-
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e ) {
             Player.getInstance().CloseConnection();
@@ -126,6 +132,13 @@ namespace Client {
                 instance = new GameWindow();
             }
             return instance;
+        }
+
+        public void StarHit() {
+            currentHitStarts++;
+            if(MapParser._starNumber == currentHitStarts) {
+                Player.getInstance().WriteLine( "MaxStarHit:VALUE:" + currentHitStarts + "ENDVALUE" );
+            }
         }
     }
 }
