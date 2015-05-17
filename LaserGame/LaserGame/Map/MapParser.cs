@@ -51,19 +51,24 @@ namespace Client.Map {
                 if(!_parsedPart.Contains( "" + _curParsingRow + "." + _curParsingColumn )) {
                     SetCurrentChar();
 
-                    int x;
-                    int y;
                     int blockWidth;
                     int blockHeight;
-                    ExtractBlockDimensionAndMultiply( currentChar, out x, out y, out blockWidth, out blockHeight );
+                    int x;
+                    int y;
 
                     switch(currentChar) {
                         case "H":
-                            HardBlock.Add( Block.Create( x, y, blockWidth, blockHeight, Brushes.Green ) );
+                            ExtractBlockDimensionAndMultiply( currentChar, out blockWidth, out blockHeight, out x, out y );
+                            HardBlock.Add( Block.Create( blockWidth, blockHeight, x, y, Brushes.Green ) );
                             break;
                         case "S":
-                            StarBlock.Add( Block.Create( x, y, blockWidth, blockHeight, Brushes.Gold ) );
+                            ExtractBlockDimensionAndMultiply( currentChar, out blockWidth, out blockHeight, out x, out y );
+                            StarBlock.Add( Block.Create( blockWidth, blockHeight, x, y, Brushes.Gold ) );
                             _starNumber++;
+                            break;
+                        case "L":
+                            ExtractLaserDimension( currentChar, out blockWidth, out blockHeight, out x, out y );
+                            Laser.getInstance().BuildLaserLine( "NONE", new Point( x, y ), new Point( blockWidth, blockHeight ) );
                             break;
                         default:
                             break;
@@ -75,13 +80,32 @@ namespace Client.Map {
             GameWindow.getInstance().ShowGame();
         }
 
-        private static void ExtractBlockDimensionAndMultiply( string currentChar, out int x, out int y, out int blockWidth, out int blockHeight ) {
+        private static void ExtractBlockDimensionAndMultiply( string currentChar, out int blockWidth, out int blockHeight, out int x, out int y ) {
             Tuple<int, int, int, int> diagonal = GetBlockPoints( currentChar );
 
-            x = (diagonal.Item3 + 1) * _multiplierX - diagonal.Item1 * _multiplierX;
-            y = (diagonal.Item4 + 1) * _multiplierY - diagonal.Item2 * _multiplierY;
-            blockWidth = diagonal.Item1 * _multiplierX;
-            blockHeight = diagonal.Item2 * _multiplierY;
+            x = diagonal.Item1 * _multiplierX;
+            y = diagonal.Item2 * _multiplierY;
+            blockWidth = (diagonal.Item3 + 1) * _multiplierX - x;
+            blockHeight = (diagonal.Item4 + 1) * _multiplierY - y;
+        }
+
+        private static void ExtractLaserDimension( string currentChar, out int blockWidth, out int blockHeight, out int x, out int y ) {
+            Tuple<int, int, int, int> diagonal = GetBlockPoints( currentChar );
+
+            x = diagonal.Item1 * _multiplierX;
+            y = diagonal.Item2 * _multiplierY;
+            blockWidth = diagonal.Item3 * _multiplierX;
+            blockHeight = diagonal.Item4 * _multiplierY;
+
+            if((diagonal.Item3 * _multiplierX - diagonal.Item1 * _multiplierX) == 0) {
+                x += _multiplierX / 2;
+                blockWidth += _multiplierX / 2;
+                blockHeight += _multiplierY;
+            } else {
+                y += _multiplierY / 2;
+                blockHeight += _multiplierY / 2;
+                blockWidth += _multiplierY;
+            }
         }
 
         private static Tuple<int, int, int, int> GetBlockPoints( string character ) {

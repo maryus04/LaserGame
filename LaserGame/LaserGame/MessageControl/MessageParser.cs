@@ -29,12 +29,8 @@ namespace Client.MessageControl {
         }
 
         public static string GetNick( string message ) {
-            int PREFIX_LENGTH = 15;
             string playerName = message.Substring( message.IndexOf( "NICK:" ) + 5, (message.IndexOf( "ENDNICK" )) - (message.IndexOf( "NICK:" ) + 5) );
-            for(int i = playerName.Length; i < PREFIX_LENGTH; i++) {
-                playerName = playerName + "_";
-            }
-            return playerName + ":";
+            return playerName + " : ";
         }
 
         public static string GetName( string message ) {

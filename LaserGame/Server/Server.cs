@@ -13,6 +13,7 @@ namespace Server {
         public static Hashtable _nickName;
 
         private static string _map;
+        private static string _mapName = "";
 
         private static bool _gameStarted = false;
 
@@ -61,6 +62,14 @@ namespace Server {
             return _map;
         }
 
+        public static void SetCurrentMapName( string mapName ) {
+            _mapName = mapName;
+        }
+
+        public static string GetCurrectMapName() {
+            return _mapName;
+        }
+
         public static void SendServerMessageExcept( ServerClient sendingClient, string message ) {
             foreach(ServerClient client in _nickName.Values) {
                 if(client == sendingClient) {
@@ -106,7 +115,7 @@ namespace Server {
         public static void PlayersAreReady() {
             bool ready = true;
             foreach(ServerClient client in _nickName.Values) {
-                if(!"True".Equals( client.Status )) {
+                if(!"-- Ready".Equals( client.Status )) {
                     ready = false;
                 }
             }

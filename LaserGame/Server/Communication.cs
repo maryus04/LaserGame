@@ -46,8 +46,10 @@ namespace Server {
                         ValidateNickName( _message );
                         break;
                     case "CloseConnection:":
-                        Server.SendServerToAll( "MainWindowServerMessage:** " + _client.NickName + " left the room." );
+                        string nickName = _client.NickName;
                         CloseConnection();
+                        Server.SendServerToAll( "MainWindowServerMessage:** " + nickName + " left the room." );
+                        Server.SendServerToAll( "GameWindowServerMessage:** " + nickName + " left the game." );
                         Server.SendPlayerNames();
                         break;
                     case "PortalCreated:":
@@ -61,6 +63,9 @@ namespace Server {
                         break;
                     case "MainWindowMessage:":
                         Server.SendPlayerToAll( _client, "MainWindowMessage:" + _message );
+                        break;
+                    case "GameWindowMessage:":
+                        Server.SendPlayerToAll( _client, "GameWindowMessage:" + _message );
                         break;
                     case "ReadyPressed:":
                         _client.Status = _message;
@@ -76,6 +81,11 @@ namespace Server {
                         break;
                     case "MaxStarHit:":
                         Server.Win();
+                        break;
+                    case "MapName:":
+                        Server.SendServerToAll( "MainWindowServerMessage:** " + _client.NickName + " changed map top " + _message + "." );
+                        Server.SendServerToAll( "MapName:" + _message );
+                        Server.SetCurrentMapName( _message );
                         break;
                 }
             }
@@ -113,6 +123,7 @@ namespace Server {
                 AcceptConnection();
                 Server.SendServerToAll( "MainWindowServerMessage:** " + _client.NickName + " joined the room." );
                 Server.SendPlayerNames();
+                _client.WriteLine( "MapName:" + Server.GetCurrectMapName() );
             } else {
                 ConsoleManager.Communication( "Name \"" + name + "\" already in use. Connection refused." );
                 _client.WriteLine( "NickNameInUse:" );

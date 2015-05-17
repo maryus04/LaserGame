@@ -75,6 +75,16 @@ namespace Client.MessageControl {
                             MainWindow.getInstance().AppendText( _message + "\r\n" );
                         }
                         break;
+                    case "GameWindowMessage:":
+                        name = MessageParser.GetNick( _message );
+                        _message = MessageParser.RemoveNickFrom( _message );
+                        GameWindow.getInstance().AppendText( name + _message + "\r\n" );
+                        break;
+                    case "GameWindowServerMessage:":
+                        if(GameWindow.getInstance() != null) {
+                            GameWindow.getInstance().AppendText( _message + "\r\n" );
+                        }
+                        break;
                     case "AllPlayersAreReady:":
                         if(MainWindow.getInstance() != null) {
                             MainWindow.getInstance().AllPlayersReady();
@@ -92,13 +102,18 @@ namespace Client.MessageControl {
                     case "Resolution:":
                         GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => { MapParser.SetResolution( MessageParser.GetPoint( _message ) ); }) );
                         break;
+                    case "MapName:":
+                        MainWindow.getInstance().SetMapName( _message );
+                        break;
                 }
             }
         }
 
         private static void SetMethodMessage( string message ) {
-            _method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
-            _message = message.Replace( _method, "" );
+            if(message.Contains( ":" )) {
+                _method = message.Substring( 0, message.IndexOf( ":" ) + 1 );
+                _message = message.Replace( _method, "" );
+            }
         }
     }
 }

@@ -19,7 +19,13 @@ namespace Client {
 
         private static GameWindow instance;
 
+        private static readonly int SECONDS_OF_DISPALY = 5;
+
         private static int currentHitStarts = 0;
+        private static bool _firstEnter = true;
+
+        private int _startCountDown = SECONDS_OF_DISPALY;
+        private System.Threading.Timer _timer;
 
         public static bool IsGameStarted {
             get {
@@ -38,12 +44,6 @@ namespace Client {
 
             new Laser();
             new Portals();
-
-            Laser.getInstance().BuildLaserLine( "LEFT", new Point( 0, 200 ), new Point( 500, 200 ) ); //x
-            //Laser.getInstance().BuildLaserLine( new Point( 500, 500 ), new Point( 500, 0 ) ); //x
-            //Laser.getInstance().BuildLaserLine( new Point( 200, 0 ), new Point( 200, 300 ) ); //x
-            //Laser.getInstance().BuildLaserLine( new Point( 700, 300 ), new Point( 0, 300 ) ); //x
-            //Laser.getInstance().BuildLaserLine( new Point( 0, 0 ), new Point( 300, 300 ) );
         }
 
         private void GameWindow_KeyDown( object sender, KeyEventArgs e ) {
@@ -58,17 +58,69 @@ namespace Client {
                     }
                 }
             }
+            if(Keyboard.IsKeyDown( Key.Enter )) {
+                if(_firstEnter) {
+                    inputMessageBox.Visibility = System.Windows.Visibility.Visible;
+                    messageBox.Visibility = System.Windows.Visibility.Visible;
+                    _firstEnter = false;
+                    ResetTimer();
+                } else {
+                    _firstEnter = true;
+                    SendMessage();
+                    inputMessageBox.Visibility = System.Windows.Visibility.Hidden;
+                    _timer = new System.Threading.Timer( TimerCallback, null, 0, 1000 );
+                }
+            }
+            if(messageBox.Visibility == System.Windows.Visibility.Visible && e.Key.ToString().Length == 1) {
+                if(Char.IsLetterOrDigit( Char.Parse( e.Key.ToString() ) )) {
+                    if("".Equals( inputMessageBox.Text )) {
+                        inputMessageBox.Text += Char.ToUpper( Char.Parse( "" + e.Key ) );
+                    } else {
+                        inputMessageBox.Text += Char.ToLower( Char.Parse( "" + e.Key ) );
+                    }
+                }
+            } else if(e.Key.ToString() == "Space") {
+                inputMessageBox.Text += " ";
+            }
+        }
+
+        private void ResetTimer() {
+            if(_timer != null) {
+                _timer.Dispose();
+                _startCountDown = SECONDS_OF_DISPALY;
+            }
+        }
+
+        private void SendMessage() {
+            if(inputMessageBox.Text != "") {
+                Player.getInstance().WriteLine( "GameWindowMessage:" + inputMessageBox.Text );
+            }
+            inputMessageBox.Text = "";
+        }
+
+        private void TimerCallback( Object o ) {
+            _startCountDown -= 1;
+
+            if(_startCountDown == 0) {
+                this.Dispatcher.Invoke( (Action)(() => {
+                    messageBox.Visibility = System.Windows.Visibility.Hidden;
+                    ResetTimer();
+                }) );
+            }
         }
 
         public void SetGridLayout( int width, int height ) {
             this.Dispatcher.Invoke( (Action)(() => {
                 gameCanvas.Width = width;
                 gameCanvas.Height = height;
+
+                inputMessageBox.Width = width / 3;
+                inputMessageBox.Height = height / 3;
             }) );
         }
 
         public void CanvasChanged() {
-            DebugManager.GameWarn( "Canvas changed.\n\tRemoving all lasers.\n\tStar count set to zero." );
+            DebugManager.GameWarn( "Canvas changed.\n\t\t\tRemoving all lasers.\n\t\t\tStar count set to zero." );
             this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
         }
 
@@ -139,6 +191,15 @@ namespace Client {
             if(MapParser._starNumber == currentHitStarts) {
                 Player.getInstance().WriteLine( "MaxStarHit:VALUE:" + currentHitStarts + "ENDVALUE" );
             }
+        }
+
+        public void AppendText( string message ) {
+            this.Dispatcher.Invoke( (Action)(() => {
+                messageBox.Text = message + messageBox.Text;
+                messageBox.Visibility = System.Windows.Visibility.Visible;
+                ResetTimer();
+                _timer = new System.Threading.Timer( TimerCallback, null, 0, 1000 );
+            }) );
         }
     }
 }

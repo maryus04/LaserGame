@@ -165,7 +165,11 @@ namespace Client {
         }
 
         private void ReadyButtonClick( object sender, RoutedEventArgs e ) {
-            Player.getInstance().WriteLine( "ReadyPressed:" + readyButton.IsChecked );
+            string status = "-- Main menu";
+            if((bool)readyButton.IsChecked) {
+                status = "-- Ready";
+            }
+            Player.getInstance().WriteLine( "ReadyPressed:" + status );
         }
 
         public void SetAvaibility() {
@@ -213,11 +217,7 @@ namespace Client {
         public void UpdatePlayerStatus( string playerName, string status ) {
             this.Dispatcher.Invoke( (Action)(() => {
                 ListBoxItem item = new ListBoxItem();
-                if("True".Equals( status )) {
-                    item.Content = playerName + "-- Ready";
-                } else if("False".Equals( status )) {
-                    item.Content = playerName + "-- Main menu";
-                }
+                item.Content = playerName + status;
                 int index = -1;
                 foreach(ListBoxItem curItem in playersList.Items) {
                     string itemContent = curItem.Content.ToString();
@@ -258,6 +258,12 @@ namespace Client {
             mapNameLabel.Content = filename.Replace( ".map", "" );
 
             Player.getInstance().WriteLine( "MapName:" + mapNameLabel.Content );
+        }
+
+        public void SetMapName( string map ) {
+            this.Dispatcher.Invoke( (Action)(() => {
+                mapNameLabel.Content = map;
+            }) );
         }
     }
 }
