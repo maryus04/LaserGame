@@ -10,7 +10,7 @@ namespace Client.CanvasComponents {
 
         public static void Add( Rectangle block ) {
             CanvasBlocks.list.Add( new Block( "HardBlock", block, true ) );
-            GameWindow.getInstance().AddToGameCanvas( block );
+            GameWindow.GetInstance().AddToGameCanvas( block );
         }
 
     }

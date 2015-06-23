@@ -25,7 +25,7 @@ namespace Client.CanvasComponents {
                 return;
             }
             string temp = "";
-            temp = LaserBehavior.IntersectionLinePortals( Laser.getInstance().GetLastLine() );
+            temp = LaserBehavior.IntersectionLinePortals( Laser.GetInstance().GetLastLine() );
             switch(temp) {
                 case "first":
                     LaserBehavior.BuildPortalLine( Portals.getInstance().SecondPortal );
@@ -34,6 +34,8 @@ namespace Client.CanvasComponents {
                     LaserBehavior.BuildPortalLine( Portals.getInstance().FirstPortal );
                     break;
             }
+            LaserBehavior.GetLaserStarCount();
+            GameWindow.GetInstance().ResetStars();
         }
 
         public static Portals getInstance() {

@@ -48,13 +48,13 @@ namespace Client.CanvasComponents {
         }
 
         public Line GetLastLine() {
-            return (Line)_laserLines.Values.Last();
+            return (Line)_laserLines.Values.First();
         }
 
         public void RemoveAll() {
             RemoveMyLaser();
-            for(int i = 1; i < _laserLines.Count; i++) {
-                GameWindow.getInstance().RemoveFromGameCanvas( _laserLines.Values.ElementAt( i ) );
+            for(int i = 0; i < _laserLines.Count - 1; i++) {
+                GameWindow.GetInstance().RemoveFromGameCanvas( _laserLines.Values.ElementAt( i ) );
                 _laserLines.Remove( _laserLines.Keys.ElementAt( i ) );
             }
         }
@@ -64,12 +64,16 @@ namespace Client.CanvasComponents {
                 return;
             }
             Player.getInstance().WriteLine( "LaserRemoved:COORD2:" + _myLaser.X1 + "," + _myLaser.Y1 + "," + _myLaser.X2 + "," + _myLaser.Y2 + "ENDCOORD2" );
-            GameWindow.getInstance().RemoveFromGameCanvas( _myLaser );
+            GameWindow.GetInstance().RemoveFromGameCanvas( _myLaser );
             _myLaser = null;
         }
 
         public List<Line> GetAllLines() {
             return _laserLines.Values.ToList();
+        }
+
+        public Line GetMyLaser() {
+            return _myLaser;
         }
 
         public void AddLine( Line line ) {
@@ -96,7 +100,7 @@ namespace Client.CanvasComponents {
         public Line BuildMyLaserLine( string buildingDirection, Point p1, Point p2 ) {
             _myLaser = BuildIntersectedLaserLine( buildingDirection, p1, p2 );
 
-            GameWindow.getInstance().AddToGameCanvas( _myLaser );
+            GameWindow.GetInstance().AddToGameCanvas( _myLaser );
             Player.getInstance().WriteLine( "LaserCreated:VALUE:" + buildingDirection + "ENDVALUE" + "COORD2:" + _myLaser.X1 + "," + _myLaser.Y1 + "," + _myLaser.X2 + "," + _myLaser.Y2 + "ENDCOORD2" );
             return _myLaser;
         }
@@ -107,7 +111,7 @@ namespace Client.CanvasComponents {
             myLine.StrokeThickness = 1;
             myLine.Stroke = System.Windows.Media.Brushes.Red;
             AddLine( myLine );
-            GameWindow.getInstance().AddToGameCanvas( myLine );
+            GameWindow.GetInstance().AddToGameCanvas( myLine );
             return myLine;
         }
 
@@ -145,7 +149,7 @@ namespace Client.CanvasComponents {
             return myLine;
         }
 
-        public static Laser getInstance() {
+        public static Laser GetInstance() {
             return instance;
         }
     }

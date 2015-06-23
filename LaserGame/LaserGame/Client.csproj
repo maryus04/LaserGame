@@ -95,6 +95,7 @@
     <Compile Include="CanvasBehavior\Mechanic.cs" />
     <Compile Include="CanvasComponents\Block.cs" />
     <Compile Include="CanvasComponents\HardBlock.cs" />
+    <Compile Include="CanvasComponents\MovableBlock.cs" />
     <Compile Include="CanvasComponents\Portals.cs" />
     <Compile Include="CanvasBehavior\CanvasBlocks.cs" />
     <Compile Include="CanvasComponents\StarBlock.cs" />

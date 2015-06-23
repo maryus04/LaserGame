@@ -28,14 +28,15 @@ namespace Client.CanvasBehavior {
         }
 
         public static void DrawPortal( Point centerPoint ) {
+            CanvasBlocks.Change();
             DebugManager.Game( "Added portal at (" + centerPoint.X + "," + centerPoint.Y + ")" );
             Rectangle portal = CreatePortal( centerPoint );
             Portals.getInstance().OtherPortals.Add( centerPoint, portal );
-            GameWindow.getInstance().AddToGameCanvas( portal );
+            GameWindow.GetInstance().AddToGameCanvas( portal );
         }
 
         public static void RemovePortalByRectangle( Point centerPoint ) {
-            GameWindow.getInstance().RemoveFromGameCanvas( GetPortalByInsidePoint( centerPoint ) );
+            GameWindow.GetInstance().RemoveFromGameCanvas( GetPortalByInsidePoint( centerPoint ) );
             Portals.getInstance().OtherPortals.Remove( centerPoint );
         }
 

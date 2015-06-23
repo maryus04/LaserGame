@@ -19,8 +19,8 @@ namespace Client.Map {
 
         public static int _starNumber = 0;
 
-        private static int _multiplierX = 1;
-        private static int _multiplierY = 1;
+        public static int _multiplierX = 1;
+        public static int _multiplierY = 1;
 
         public static void ParseMap( string[] map ) {
             _width = Int32.Parse( map[0] ) + 2;
@@ -34,10 +34,14 @@ namespace Client.Map {
             Player.getInstance().WriteLine( "MyResolution:COORD:" + screen.Width + "," + screen.Height + "ENDCOORD" );
         }
 
+        public static int GetWidth() {
+            return _width * _multiplierX;
+        }
+
         public static void SetResolution( Point resolution ) {
             MapParser.SetMultiplier( (int)resolution.X / _width, (int)resolution.Y / _height );
             PortalBehavior.SetDimensions( _multiplierX, _multiplierY );
-            GameWindow.getInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
+            GameWindow.GetInstance().SetGridLayout( (_width + 1) * _multiplierX, (_height + 1) * _multiplierY );
 
             StartDrawing();
         }
@@ -68,7 +72,11 @@ namespace Client.Map {
                             break;
                         case "L":
                             ExtractLaserDimension( currentChar, out blockWidth, out blockHeight, out x, out y );
-                            Laser.getInstance().BuildLaserLine( "NONE", new Point( x, y ), new Point( blockWidth, blockHeight ) );
+                            Laser.GetInstance().BuildLaserLine( "NONE", new Point( x, y ), new Point( blockWidth, blockHeight ) );
+                            break;
+                        case "M":
+                            ExtractBlockDimensionAndMultiply( currentChar, out blockWidth, out blockHeight, out x, out y );
+                            new MovableBlock( blockWidth, blockHeight, x, y, Brushes.Blue );
                             break;
                         default:
                             break;
@@ -77,7 +85,7 @@ namespace Client.Map {
 
                 currentChar = GetNextChar();
             }
-            GameWindow.getInstance().ShowGame();
+            GameWindow.GetInstance().ShowGame();
         }
 
         private static void ExtractBlockDimensionAndMultiply( string currentChar, out int blockWidth, out int blockHeight, out int x, out int y ) {

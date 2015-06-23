@@ -27,6 +27,8 @@ namespace Client {
         private int _startCountDown = SECONDS_OF_DISPALY;
         private System.Threading.Timer _timer;
 
+        public bool blocksUpdated = false;
+
         public static bool IsGameStarted {
             get {
                 if(instance == null) {
@@ -121,11 +123,15 @@ namespace Client {
 
         public void CanvasChanged() {
             DebugManager.GameWarn( "Canvas changed.\n\t\t\tRemoving all lasers.\n\t\t\tStar count set to zero." );
-            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveAll(); }) );
+            this.Dispatcher.Invoke( (Action)(() => {
+                Laser.GetInstance().RemoveAll();
+            }) );
+            blocksUpdated = false;
         }
 
         public void ResetStars() {
             currentHitStarts = 0;
+            LaserBehavior.ResetStarBlockList();
         }
 
         public void CreateMap( string map ) {
@@ -138,18 +144,24 @@ namespace Client {
 
         public void ConstructLaser() {
             DebugManager.GameWarn( "Updating laser intersections." );
-            if(Laser.getInstance().BuildLaser()) {
+            if(Laser.GetInstance().BuildLaser()) {
                 this.Dispatcher.Invoke( (Action)(() => { Portals.getInstance().BuildLaserIfIntersect(); }) );
             }
+            blocksUpdated = false;
         }
 
         public void DeleteMyLaser() {
             DebugManager.GameWarn( "Canvas changed. Removing my laser." );
-            this.Dispatcher.Invoke( (Action)(() => { Laser.getInstance().RemoveMyLaser(); }) );
+            this.Dispatcher.Invoke( (Action)(() => { Laser.GetInstance().RemoveMyLaser(); }) );
+            blocksUpdated = false;
         }
 
         public void PortalAccepted( Point centerPoint ) {
             this.Dispatcher.Invoke( (Action)(() => { PortalBehavior.AddPlayerPortal( centerPoint ); }) );
+        }
+
+        public void GameFinished() {
+            this.Dispatcher.Invoke( (Action)(() => { finishLabel.Visibility = System.Windows.Visibility.Visible; }) );
         }
 
         public void AddToGameCanvas( UIElement block ) {
@@ -161,7 +173,6 @@ namespace Client {
         }
 
         protected void Canvas_Clicked( object sender, System.Windows.Input.MouseEventArgs e ) {
-            ResetStars();
             Player.getInstance().WriteLine( "PortalCreated:COORD:" + Convert.ToInt64( e.GetPosition( gameCanvas ).X ) + "," + Convert.ToInt64( e.GetPosition( gameCanvas ).Y ) + "ENDCOORD" );
         }
 
@@ -179,7 +190,7 @@ namespace Client {
             DebugManager.DebugGame( "Removing other player portal from (" + centerPoint.X + "," + centerPoint.Y + ")" );
         }
 
-        public static GameWindow getInstance() {
+        public static GameWindow GetInstance() {
             if(instance == null) {
                 instance = new GameWindow();
             }
@@ -187,9 +198,11 @@ namespace Client {
         }
 
         public void StarHit() {
-            currentHitStarts++;
-            if(MapParser._starNumber == currentHitStarts) {
-                Player.getInstance().WriteLine( "MaxStarHit:VALUE:" + currentHitStarts + "ENDVALUE" );
+            if(blocksUpdated) {
+                currentHitStarts++;
+                if(MapParser._starNumber == currentHitStarts) {
+                    Player.getInstance().WriteLine( "MaxStarHit:VALUE:" + currentHitStarts + "ENDVALUE" );
+                }
             }
         }
 

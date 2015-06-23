@@ -37,33 +37,33 @@ namespace Client.MessageControl {
                         DebugManager.GameWarn( "Nickname already in use" );
                         break;
                     case "PortalAccepted:":
-                        GameWindow.getInstance().DeleteMyLaser();
-                        GameWindow.getInstance().PortalAccepted( MessageParser.GetPoint( entireMessage ) );
-                        GameWindow.getInstance().ConstructLaser();
+                        GameWindow.GetInstance().DeleteMyLaser();
+                        GameWindow.GetInstance().PortalAccepted( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.GetInstance().ConstructLaser();
                         break;
                     case "PortalDenied:":
                         DebugManager.GameWarn( _message );
                         break;
                     case "PortalSpawned:":
-                        GameWindow.getInstance().PortalSpawnedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
-                        GameWindow.getInstance().ConstructLaser();
+                        GameWindow.GetInstance().PortalSpawnedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.GetInstance().ConstructLaser();
                         break;
                     case "PortalRemoved:":
-                        GameWindow.getInstance().CanvasChanged();
-                        GameWindow.getInstance().PortalRemovedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
-                        GameWindow.getInstance().ConstructLaser();
+                        GameWindow.GetInstance().CanvasChanged();
+                        GameWindow.GetInstance().PortalRemovedByOtherPlayer( MessageParser.GetPoint( entireMessage ) );
+                        GameWindow.GetInstance().ConstructLaser();
                         break;
                     case "LaserCreated:":
-                        GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => {
+                        GameWindow.GetInstance().Dispatcher.Invoke( (Action)(() => {
                             Line line = MessageParser.GetLine( entireMessage );
-                            Laser.getInstance().BuildLaserLine( MessageParser.GetValue( entireMessage ), new Point( line.X1, line.Y1 ), new Point( line.X2, line.Y2 ) );
+                            Laser.GetInstance().BuildLaserLine( MessageParser.GetValue( entireMessage ), new Point( line.X1, line.Y1 ), new Point( line.X2, line.Y2 ) );
                         }) );
-                        GameWindow.getInstance().ConstructLaser();
+                        GameWindow.GetInstance().ConstructLaser();
                         break;
                     case "LaserRemoved:":
                         Line laser = MessageParser.GetLine( _message );
-                        GameWindow.getInstance().RemoveFromGameCanvas( Laser.getInstance().GetLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 ) );
-                        Laser.getInstance().RemoveLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 );
+                        GameWindow.GetInstance().RemoveFromGameCanvas( Laser.GetInstance().GetLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 ) );
+                        Laser.GetInstance().RemoveLine( "" + laser.X1 + laser.Y1 + laser.X2 + laser.Y2 );
                         break;
                     case "MainWindowMessage:":
                         string name = MessageParser.GetNick( _message );
@@ -78,11 +78,11 @@ namespace Client.MessageControl {
                     case "GameWindowMessage:":
                         name = MessageParser.GetNick( _message );
                         _message = MessageParser.RemoveNickFrom( _message );
-                        GameWindow.getInstance().AppendText( name + _message + "\r\n" );
+                        GameWindow.GetInstance().AppendText( name + _message + "\r\n" );
                         break;
                     case "GameWindowServerMessage:":
-                        if(GameWindow.getInstance() != null) {
-                            GameWindow.getInstance().AppendText( _message + "\r\n" );
+                        if(GameWindow.GetInstance() != null) {
+                            GameWindow.GetInstance().AppendText( _message + "\r\n" );
                         }
                         break;
                     case "AllPlayersAreReady:":
@@ -97,13 +97,16 @@ namespace Client.MessageControl {
                         MainWindow.getInstance().UpdatePlayerStatus( MessageParser.GetName( _message ), MessageParser.GetValue( _message ) );
                         break;
                     case "MapAccepted:":
-                        GameWindow.getInstance().CreateMap( _message );
+                        GameWindow.GetInstance().CreateMap( _message );
                         break;
                     case "Resolution:":
-                        GameWindow.getInstance().Dispatcher.Invoke( (Action)(() => { MapParser.SetResolution( MessageParser.GetPoint( _message ) ); }) );
+                        GameWindow.GetInstance().Dispatcher.Invoke( (Action)(() => { MapParser.SetResolution( MessageParser.GetPoint( _message ) ); }) );
                         break;
                     case "MapName:":
                         MainWindow.getInstance().SetMapName( _message );
+                        break;
+                    case "GameFinished:":
+                        GameWindow.GetInstance().GameFinished();
                         break;
                 }
             }

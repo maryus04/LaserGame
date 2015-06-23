@@ -182,6 +182,9 @@ namespace Server {
 
         internal static void Win() {
             ConsoleManager.Server( "Game finished" );
+            foreach(ServerClient client in _nickName.Values) {
+                client.WriteLine( "GameFinished:" );
+            }
         }
     }
 }

@@ -82,7 +82,7 @@ namespace Client {
             instance = this;
             DebugManager.EnableConsole();
             InitializeComponent();
-            RefreshServerList();
+           // RefreshServerList();
         }
 
         private void InitiateConnection( object sender, RoutedEventArgs e ) {
